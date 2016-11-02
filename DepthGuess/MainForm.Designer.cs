@@ -43,12 +43,12 @@
             // 
             this.fileTextBox.Location = new System.Drawing.Point(12, 12);
             this.fileTextBox.Name = "fileTextBox";
-            this.fileTextBox.Size = new System.Drawing.Size(260, 19);
+            this.fileTextBox.Size = new System.Drawing.Size(349, 19);
             this.fileTextBox.TabIndex = 0;
             // 
             // fileSelectButton
             // 
-            this.fileSelectButton.Location = new System.Drawing.Point(12, 37);
+            this.fileSelectButton.Location = new System.Drawing.Point(367, 10);
             this.fileSelectButton.Name = "fileSelectButton";
             this.fileSelectButton.Size = new System.Drawing.Size(81, 23);
             this.fileSelectButton.TabIndex = 1;
@@ -58,7 +58,7 @@
             // 
             // startButton
             // 
-            this.startButton.Location = new System.Drawing.Point(99, 37);
+            this.startButton.Location = new System.Drawing.Point(12, 37);
             this.startButton.Name = "startButton";
             this.startButton.Size = new System.Drawing.Size(81, 23);
             this.startButton.TabIndex = 2;
@@ -83,9 +83,9 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripProgressBar1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 239);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 255);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(284, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(460, 22);
             this.statusStrip1.TabIndex = 5;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -96,10 +96,12 @@
             // 
             // logTextBox
             // 
-            this.logTextBox.Location = new System.Drawing.Point(14, 90);
+            this.logTextBox.BackColor = System.Drawing.SystemColors.Window;
+            this.logTextBox.Location = new System.Drawing.Point(12, 90);
             this.logTextBox.Name = "logTextBox";
+            this.logTextBox.ReadOnly = true;
             this.logTextBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
-            this.logTextBox.Size = new System.Drawing.Size(258, 146);
+            this.logTextBox.Size = new System.Drawing.Size(436, 162);
             this.logTextBox.TabIndex = 6;
             this.logTextBox.Text = "";
             // 
@@ -107,7 +109,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 261);
+            this.ClientSize = new System.Drawing.Size(460, 277);
             this.Controls.Add(this.logTextBox);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.label1);
@@ -117,6 +119,8 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Name = "MainForm";
             this.Text = "DepthGuess";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);

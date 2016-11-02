@@ -1,20 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace DepthGuess
 {
+    /// <summary>画像を表示するウインドウ</summary>
     class ImageWindow
     {
         private Form form;
         private PictureBox pictureBox;
         private LogWriter logWriter;
 
+        /// <summary>コンストラクタ</summary>
+        /// <param name="text">タイトル</param>
+        /// <param name="image">画像</param>
+        /// <param name="writer"><see cref="LogWriter"/></param>
         public ImageWindow(string text, Image image, LogWriter writer)
         {
             InitializeComponent(text, image);
@@ -45,10 +45,12 @@ namespace DepthGuess
             form.PerformLayout();
         }
 
+        /// <summary>ウインドウを表示する</summary>
         public void show()
         {
             logWriter.write(form.Text + "を表示しました");
             form.Show();
+            form.Refresh();
         }
 
     }
