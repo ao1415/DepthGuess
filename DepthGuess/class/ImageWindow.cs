@@ -19,6 +19,12 @@ namespace DepthGuess
         {
             InitializeComponent(text, image);
             logWriter = writer;
+
+            if (image==null)
+            {
+                logWriter.writeError("画像が存在しません");
+                logWriter.writeError("ダミーデータを表示します");
+            }
         }
 
         private void InitializeComponent(string text, Image image)
@@ -29,17 +35,24 @@ namespace DepthGuess
 
             pictureBox.Location = new Point(0, 0);
             pictureBox.Name = "pictureBox";
-            pictureBox.Size = image.Size;
+            if (image == null)
+                pictureBox.Size = new Size(200, 200);
+            else
+                pictureBox.Size = image.Size;
             pictureBox.Image = image;
             pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox.Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Bottom;
 
             form.AutoScaleDimensions = new SizeF(6F, 12F);
             form.AutoScaleMode = AutoScaleMode.Font;
-            form.ClientSize = image.Size;
+            form.ClientSize = pictureBox.Size;
             form.Controls.Add(pictureBox);
+            form.ShowIcon = false;
             form.Name = "ImageForm";
             form.Text = text;
+
+            form.BackColor = Color.FromArgb(30, 30, 30);
+
             ((ISupportInitialize)(pictureBox)).EndInit();
             form.ResumeLayout(false);
             form.PerformLayout();

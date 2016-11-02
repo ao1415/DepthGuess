@@ -12,35 +12,87 @@ namespace DepthGuess
         public MainForm()
         {
             InitializeComponent();
+            styleSetup();
 
             logWriter = new LogWriter(ref logTextBox);
+
+        }
+
+        private void styleSetup()
+        {
+            BackColor = Color.FromArgb(30, 30, 30);
+            ForeColor = SystemColors.Window;
+
+            foreach (var control in Controls)
+            {
+                var type = control.GetType();
+
+                if (type == typeof(Button))
+                {
+                    Button btn = (Button)control;
+                    btn.BackColor = Color.FromArgb(62, 62, 64);
+                    btn.ForeColor = Color.FromArgb(220, 220, 220);
+                    btn.FlatStyle = FlatStyle.Flat;
+                }
+                else if (type == typeof(TextBox))
+                {
+                    TextBox text = (TextBox)control;
+                    text.BackColor = Color.FromArgb(37, 37, 38);
+                    text.ForeColor = Color.FromArgb(220, 220, 220);
+                    text.BorderStyle = BorderStyle.FixedSingle;
+                }
+                else if (type == typeof(RichTextBox))
+                {
+                    RichTextBox text = (RichTextBox)control;
+                    text.BackColor = Color.FromArgb(40, 40, 42);
+                    text.ForeColor = Color.FromArgb(220, 220, 220);
+                    text.BorderStyle = BorderStyle.None;
+                }
+                else if (type==typeof(Label))
+                {
+                    Label label = (Label)control;
+                    label.BackColor = Color.FromArgb(30, 30, 30);
+                    label.ForeColor = Color.FromArgb(220, 220, 220);
+                }
+            }
+
         }
 
         private void fileSelectButton_Click(object sender, EventArgs e)
         {
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                fileTextBox.Text = openFileDialog1.FileName;
+                fileTextBox.Text = openFileDialog.FileName;
             }
         }
 
         private void startButton_Click(object sender, EventArgs e)
         {
             logTextBox.Clear();
-            LoadImage loadImage = new LoadImage(logWriter);
-            Bitmap bmp = loadImage.load(fileTextBox.Text);
 
-            ImageWindow originalImage = new ImageWindow("元画像", bmp, logWriter);
-            originalImage.show();
+            try
+            {
+                LoadImage loadImage = new LoadImage(logWriter);
+                Bitmap bmp = loadImage.load(fileTextBox.Text);
 
-            MedianCut medianCut = new MedianCut(logWriter);
-            Color[] pallet;
-            Bitmap median = medianCut.getImage(bmp, out pallet);
+                ImageWindow originalImage = new ImageWindow("元画像", bmp, logWriter);
+                originalImage.show();
 
-            ImageWindow medianImage = new ImageWindow("減色画像", median, logWriter);
-            medianImage.show();
+                MedianCut medianCut = new MedianCut(logWriter);
+                Color[] pallet;
+                Bitmap median = medianCut.getImage(bmp, out pallet);
 
-            logWriter.write("処理が完了しました");
+                ImageWindow medianImage = new ImageWindow("減色画像", median, logWriter);
+                medianImage.show();
+                
+                logWriter.write("処理が完了しました");
+            }
+            catch(Exception ex)
+            {
+                logWriter.writeError("エラーが発生しました");
+                logWriter.writeError(ex.ToString());
+                logWriter.writeError("処理を停止します");
+            }
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -49,6 +101,8 @@ namespace DepthGuess
             WindowState = Properties.Settings.Default.WindowState;
 
             fileTextBox.Text = Properties.Settings.Default.FilePath;
+
+            logTextBox.Focus();
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)

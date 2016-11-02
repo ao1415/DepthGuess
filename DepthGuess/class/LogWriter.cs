@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace DepthGuess
@@ -20,13 +21,15 @@ namespace DepthGuess
         public void write(string text)
         {
             write(text, Color.Green);
+            Console.Out.WriteLine(text);
         }
 
         /// <summary>エラーログを書き出す</summary>
         /// <param name="text">メッセージ</param>
         public void writeError(string text)
         {
-            write("エラー：" + text, Color.Red);
+            write(text, Color.Red);
+            Console.Error.WriteLine(text);
         }
 
         private void write(string text, Color color)

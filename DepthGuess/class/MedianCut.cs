@@ -27,6 +27,16 @@ namespace DepthGuess
         /// <returns>出力画像</returns>
         public Bitmap getImage(Bitmap image, out Color[] selectColors)
         {
+            logWriter.write("減色処理を開始します");
+
+            if (image==null)
+            {
+                selectColors = null;
+                logWriter.writeError("画像が存在しません");
+                logWriter.writeError("減色処理を中止します");
+                return null;
+            }
+
             Bitmap img = new Bitmap(image.Size.Width, image.Size.Height);
 
             int[,,] colorCube = new int[64, 64, 64];
