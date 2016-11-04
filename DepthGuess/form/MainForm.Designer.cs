@@ -47,7 +47,7 @@
             // 
             this.fileSelectButton.Location = new System.Drawing.Point(12, 37);
             this.fileSelectButton.Name = "fileSelectButton";
-            this.fileSelectButton.Size = new System.Drawing.Size(86, 23);
+            this.fileSelectButton.Size = new System.Drawing.Size(101, 23);
             this.fileSelectButton.TabIndex = 1;
             this.fileSelectButton.Text = "ファイルの選択";
             this.fileSelectButton.UseVisualStyleBackColor = true;
@@ -55,9 +55,9 @@
             // 
             // startButton
             // 
-            this.startButton.Location = new System.Drawing.Point(104, 37);
+            this.startButton.Location = new System.Drawing.Point(119, 37);
             this.startButton.Name = "startButton";
-            this.startButton.Size = new System.Drawing.Size(86, 23);
+            this.startButton.Size = new System.Drawing.Size(101, 23);
             this.startButton.TabIndex = 2;
             this.startButton.Text = "実行";
             this.startButton.UseVisualStyleBackColor = true;
@@ -66,7 +66,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 75);
+            this.label1.Location = new System.Drawing.Point(12, 73);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(53, 12);
             this.label1.TabIndex = 4;
@@ -79,11 +79,11 @@
             // logTextBox
             // 
             this.logTextBox.BackColor = System.Drawing.SystemColors.Window;
-            this.logTextBox.Location = new System.Drawing.Point(12, 90);
+            this.logTextBox.Location = new System.Drawing.Point(12, 88);
             this.logTextBox.Name = "logTextBox";
             this.logTextBox.ReadOnly = true;
             this.logTextBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
-            this.logTextBox.Size = new System.Drawing.Size(436, 175);
+            this.logTextBox.Size = new System.Drawing.Size(436, 177);
             this.logTextBox.TabIndex = 6;
             this.logTextBox.Text = "";
             this.logTextBox.WordWrap = false;

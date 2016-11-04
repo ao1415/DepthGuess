@@ -29,7 +29,7 @@ namespace DepthGuess
         {
             logWriter.write("減色処理を開始します");
 
-            if (image==null)
+            if (image == null)
             {
                 selectColors = null;
                 logWriter.writeError("画像が存在しません");
@@ -157,7 +157,7 @@ namespace DepthGuess
             logWriter.write("減色処理が完了しました");
             logWriter.write("パレット数=" + selectColors.Length);
             for (int i = 0; i < selectColors.Length; i++)
-                logWriter.write((i + 1) + "番目のパレット=" + selectColors[i]);
+                logWriter.write(string.Format("{0,2}番目のパレット=Color [A={1,3}, R={2,3}, G={3,3}, B={4,3}]", (i + 1), selectColors[i].A, selectColors[i].R, selectColors[i].G, selectColors[i].B));
 
             return img;
         }

@@ -46,19 +46,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="class\ImageWindow.cs" />
-    <Compile Include="class\LoadImage.cs" />
-    <Compile Include="class\LogWriter.cs" />
-    <Compile Include="MainForm.cs">
+    <Compile Include="class\Image\SobelFilter.cs" />
+    <Compile Include="class\Utility\ImageWindow.cs" />
+    <Compile Include="class\Image\LoadImage.cs" />
+    <Compile Include="class\Utility\LogWriter.cs" />
+    <Compile Include="form\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainForm.Designer.cs">
+    <Compile Include="form\Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="form\MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="form\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="class\MedianCut.cs" />
+    <Compile Include="class\Image\MedianCut.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="MainForm.resx">
+    <EmbeddedResource Include="form\Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="form\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
