@@ -31,6 +31,8 @@ namespace DepthGuess
                 logWriter.writeError(text + "が存在しません");
                 logWriter.writeError("ダミーデータを表示します");
             }
+
+            show();
         }
 
         private void InitializeComponent(string text, Image image)

@@ -98,24 +98,22 @@ namespace DepthGuess
             logWriter.write("処理を開始します");
 
             LoadImage loadImage = new LoadImage(logWriter);
-            Bitmap bmp = loadImage.load(fileTextBox.Text);
-
-            ImageWindow originalImage = new ImageWindow("元画像", bmp, logWriter);
-            originalImage.show();
-
             MedianCut medianCut = new MedianCut(logWriter);
-            Color[] pallet;
-            Bitmap median = medianCut.getImage(bmp, out pallet);
-
-            ImageWindow medianImage = new ImageWindow("減色画像", median, logWriter);
-            medianImage.show();
-
             SobelFilter sobelFilter = new SobelFilter(logWriter);
-            Bitmap sobel = sobelFilter.getImage(median);
 
-            ImageWindow sobelImage = new ImageWindow("エッジ画像", sobel, logWriter);
-            sobelImage.show();
+            Bitmap originalImage = loadImage.load(fileTextBox.Text);
 
+            new ImageWindow("元画像", originalImage, logWriter);
+
+            Color[] pallet;
+            Bitmap mediancutImage = medianCut.getImage(originalImage, out pallet);
+
+            new ImageWindow("減色画像", mediancutImage, logWriter);
+
+            new ImageWindow("エッジ画像", sobelFilter.getImage(mediancutImage), logWriter);
+            
+            new ImageWindow("エッジ画像(減色なし)", sobelFilter.getImage(originalImage), logWriter);
+            
             logWriter.write("処理が完了しました");
         }
 
