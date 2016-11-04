@@ -17,6 +17,13 @@ namespace DepthGuess
 
             logWriter.write("エッジ抽出を行います");
 
+            if (image == null)
+            {
+                logWriter.writeError("画像が存在しません");
+                logWriter.writeError("エッジ抽出を中止します");
+                return null;
+            }
+
             byte[][,] bmp = new byte[3][,];
             for (int i = 0; i < bmp.Length; i++)
                 bmp[i] = new byte[image.Height, image.Width];

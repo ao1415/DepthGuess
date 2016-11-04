@@ -12,7 +12,10 @@ namespace DepthGuess
         public MainForm()
         {
             InitializeComponent();
+
+#if BLACK_STYLE
             styleSetup();
+#endif
 
             logWriter = new LogWriter(ref logTextBox);
 
@@ -74,28 +77,12 @@ namespace DepthGuess
         {
             logTextBox.Clear();
 
+#if DEBUG
+            process();
+#else
             try
             {
-                LoadImage loadImage = new LoadImage(logWriter);
-                Bitmap bmp = loadImage.load(fileTextBox.Text);
-
-                ImageWindow originalImage = new ImageWindow("元画像", bmp, logWriter);
-                originalImage.show();
-
-                MedianCut medianCut = new MedianCut(logWriter);
-                Color[] pallet;
-                Bitmap median = medianCut.getImage(bmp, out pallet);
-
-                ImageWindow medianImage = new ImageWindow("減色画像", median, logWriter);
-                medianImage.show();
-
-                SobelFilter sobelFilter = new SobelFilter(logWriter);
-                Bitmap sobel = sobelFilter.getImage(median);
-
-                ImageWindow sobelImage = new ImageWindow("エッジ画像", sobel, logWriter);
-                sobelImage.show();
-
-                logWriter.write("処理が完了しました");
+                process();
             }
             catch (Exception ex)
             {
@@ -103,6 +90,33 @@ namespace DepthGuess
                 logWriter.writeError(ex.ToString());
                 logWriter.writeError("処理を停止します");
             }
+#endif
+        }
+
+        private void process()
+        {
+            logWriter.write("処理を開始します");
+
+            LoadImage loadImage = new LoadImage(logWriter);
+            Bitmap bmp = loadImage.load(fileTextBox.Text);
+
+            ImageWindow originalImage = new ImageWindow("元画像", bmp, logWriter);
+            originalImage.show();
+
+            MedianCut medianCut = new MedianCut(logWriter);
+            Color[] pallet;
+            Bitmap median = medianCut.getImage(bmp, out pallet);
+
+            ImageWindow medianImage = new ImageWindow("減色画像", median, logWriter);
+            medianImage.show();
+
+            SobelFilter sobelFilter = new SobelFilter(logWriter);
+            Bitmap sobel = sobelFilter.getImage(median);
+
+            ImageWindow sobelImage = new ImageWindow("エッジ画像", sobel, logWriter);
+            sobelImage.show();
+
+            logWriter.write("処理が完了しました");
         }
 
         private void MainForm_Load(object sender, EventArgs e)

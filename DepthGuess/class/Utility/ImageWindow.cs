@@ -28,7 +28,7 @@ namespace DepthGuess
 
             if (image == null)
             {
-                logWriter.writeError("画像が存在しません");
+                logWriter.writeError(text + "が存在しません");
                 logWriter.writeError("ダミーデータを表示します");
             }
         }
@@ -43,6 +43,7 @@ namespace DepthGuess
             dialog = new SaveFileDialog();
             img = image;
 
+            #region フォームの初期設定
             menu.Items.AddRange(new ToolStripMenuItem[] { item1, item2 });
             menu.Name = "contextMenu";
             menu.Size = new Size(109, 70);
@@ -80,12 +81,16 @@ namespace DepthGuess
             form.Name = "ImageForm";
             form.Text = text;
 
+#if BLACK_STYLE
             form.BackColor = Color.FromArgb(30, 30, 30);
+#endif
 
             ((ISupportInitialize)(pictureBox)).EndInit();
             menu.ResumeLayout(false);
             form.ResumeLayout(false);
             form.PerformLayout();
+#endregion
+
         }
 
         /// <summary>ウインドウを表示する</summary>
@@ -93,9 +98,10 @@ namespace DepthGuess
         {
             logWriter.write(form.Text + "を表示しました");
             form.Show();
+            //無理やり表示させる
             form.Refresh();
         }
-        
+
         private void saveImage_Click(object sender, EventArgs e)
         {
             if (dialog.ShowDialog() == DialogResult.OK)
