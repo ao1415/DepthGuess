@@ -11,7 +11,7 @@ namespace DepthGuess
     class MedianCut
     {
 
-        private static readonly uint ColorNumber = 8;
+        private static readonly uint ColorNumber = 2;
         private LogWriter logWriter;
 
         /// <summary>コンストラクタ</summary>

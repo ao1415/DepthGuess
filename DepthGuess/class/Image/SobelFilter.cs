@@ -15,12 +15,12 @@ namespace DepthGuess
         public Bitmap getImage(Bitmap image)
         {
 
-            logWriter.write("エッジ抽出を行います");
+            logWriter.write("sobelフィルタを行います");
 
             if (image == null)
             {
                 logWriter.writeError("画像が存在しません");
-                logWriter.writeError("エッジ抽出を中止します");
+                logWriter.writeError("sobelフィルタを中止します");
                 return null;
             }
 
@@ -110,7 +110,7 @@ namespace DepthGuess
                 }
             }
 
-            logWriter.write("エッジ抽出が完了しました");
+            logWriter.write("sobelフィルタが完了しました");
 
             return nImage;
         }

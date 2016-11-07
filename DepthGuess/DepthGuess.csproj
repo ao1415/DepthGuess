@@ -61,29 +61,33 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="class\Image\SobelFilter.cs" />
-    <Compile Include="class\Utility\ImageWindow.cs" />
-    <Compile Include="class\Image\LoadImage.cs" />
-    <Compile Include="class\Utility\LogWriter.cs" />
-    <Compile Include="form\Form1.cs">
+    <Compile Include="Class\Image\EdgeExtraction.cs" />
+    <Compile Include="Class\Image\ImageThreshold.cs" />
+    <Compile Include="Class\Image\Labeling.cs" />
+    <Compile Include="Class\Image\SaveImage.cs" />
+    <Compile Include="Class\Image\SobelFilter.cs" />
+    <Compile Include="Class\Utility\ImageWindow.cs" />
+    <Compile Include="Class\Image\LoadImage.cs" />
+    <Compile Include="Class\Utility\LogWriter.cs" />
+    <Compile Include="Form\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="form\Form1.Designer.cs">
+    <Compile Include="Form\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="form\MainForm.cs">
+    <Compile Include="Form\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="form\MainForm.Designer.cs">
+    <Compile Include="Form\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="class\Image\MedianCut.cs" />
+    <Compile Include="Class\Image\MedianCut.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="form\Form1.resx">
+    <EmbeddedResource Include="Form\Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="form\MainForm.resx">
+    <EmbeddedResource Include="Form\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

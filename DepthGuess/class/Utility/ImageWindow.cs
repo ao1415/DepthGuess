@@ -72,6 +72,7 @@ namespace DepthGuess
             pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox.Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Bottom;
 
+            dialog.FileName = text;
             dialog.Filter = "画像ファイル|*.png";
 
             form.AutoScaleDimensions = new SizeF(6F, 12F);
@@ -91,7 +92,7 @@ namespace DepthGuess
             menu.ResumeLayout(false);
             form.ResumeLayout(false);
             form.PerformLayout();
-#endregion
+            #endregion
 
         }
 
@@ -109,7 +110,8 @@ namespace DepthGuess
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 string path = dialog.FileName;
-                img.Save(path);
+                SaveImage saveImage = new SaveImage(logWriter);
+                saveImage.save(img, path);
             }
         }
 
