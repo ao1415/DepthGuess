@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace DepthGuess
 {
@@ -37,8 +39,6 @@ namespace DepthGuess
                 return null;
             }
 
-            Bitmap img = new Bitmap(image.Size.Width, image.Size.Height);
-
             int[,,] colorCube = new int[64, 64, 64];
             List<Color> colors = new List<Color>();
 
@@ -46,11 +46,20 @@ namespace DepthGuess
             maxR = maxG = maxB = byte.MinValue;
             minR = minG = minB = byte.MaxValue;
 
+            #region 画像の色情報の取り出し
+
+            Bitmap bitmap = new Bitmap(image);
+            BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+            byte[] buf = new byte[bitmap.Width * bitmap.Height * 4];
+            Marshal.Copy(data.Scan0, buf, 0, buf.Length);
+
             for (int y = 0; y < image.Height; y++)
             {
                 for (int x = 0; x < image.Width; x++)
                 {
-                    Color c = image.GetPixel(x, y);
+                    int index = y * bitmap.Width * 4 + x * 4;
+                    Color c = Color.FromArgb(buf[index + 0], buf[index + 1], buf[index + 2]);
+
                     int r = (c.R & 0xfc) >> 2;
                     int g = (c.G & 0xfc) >> 2;
                     int b = (c.B & 0xfc) >> 2;
@@ -68,10 +77,12 @@ namespace DepthGuess
                     }
                 }
             }
+            #endregion
 
             List<Color> pallete = new List<Color>();
             pallete.Add(getColorAverage(colors));
 
+            #region パレットの作成
             for (int i = 1; i < ColorNumber; i++)
             {
                 int large = maxR - minR;
@@ -126,12 +137,14 @@ namespace DepthGuess
                 }
 
             }
+            #endregion
 
             selectColors = new Color[pallete.Count];
 
             for (int i = 0; i < pallete.Count; i++)
                 selectColors[i] = pallete[i];
 
+            #region 画像をパレットの色で置き換える
             for (int y = 0; y < image.Height; y++)
             {
                 for (int x = 0; x < image.Width; x++)
@@ -150,16 +163,23 @@ namespace DepthGuess
                         }
                     }
 
-                    img.SetPixel(x, y, nearColor);
+                    int index = y * bitmap.Width * 4 + x * 4;
+                    buf[index + 0] = nearColor.R;
+                    buf[index + 1] = nearColor.G;
+                    buf[index + 2] = nearColor.B;
                 }
             }
+            Marshal.Copy(buf, 0, data.Scan0, buf.Length);
+            bitmap.UnlockBits(data);
+
+            #endregion
 
             logWriter.write("減色処理が完了しました");
             logWriter.write("パレット数=" + selectColors.Length);
             for (int i = 0; i < selectColors.Length; i++)
                 logWriter.write(string.Format("{0,2}番目のパレット=Color [A={1,3}, R={2,3}, G={3,3}, B={4,3}]", (i + 1), selectColors[i].A, selectColors[i].R, selectColors[i].G, selectColors[i].B));
 
-            return img;
+            return bitmap;
         }
 
         private double getColorRange(Color c1, Color c2)

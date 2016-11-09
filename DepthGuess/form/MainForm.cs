@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
@@ -121,7 +122,7 @@ namespace DepthGuess
             Bitmap labelImage = labeling.getLabelImage(label);
             new ImageWindow("ラベリング画像", labelImage, logWriter);
 
-            saveImage.save(originalImage, label, "./depthImage.txt");
+            //saveImage.saveBinary(originalImage, label, "./depthImage.rgbad");
 
             /*
             Bitmap edgeImage1 = edge.getImage(mediancutImage);

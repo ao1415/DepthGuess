@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -40,13 +42,21 @@ namespace DepthGuess
             direction = new Point[] { new Point(0, -1), new Point(-1, 0), new Point(1, 0), new Point(0, 1) };
             //*/
 
-            for (int y = 0; y < bmp.Height; y++)
             {
-                for (int x = 0; x < bmp.Width; x++)
+                BitmapData data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+                byte[] buf = new byte[bmp.Width * bmp.Height * 4];
+                Marshal.Copy(data.Scan0, buf, 0, buf.Length);
+
+                for (int y = 0; y < bmp.Height; y++)
                 {
-                    colorTable[y, x] = bmp.GetPixel(x, y);
-                    labelTable[y, x] = -1;
+                    for (int x = 0; x < bmp.Width; x++)
+                    {
+                        int index = y * bmp.Width * 4 + x * 4;
+                        colorTable[y, x] = Color.FromArgb(buf[index + 0], buf[index + 1], buf[index + 2]);
+                        labelTable[y, x] = -1;
+                    }
                 }
+                bmp.UnlockBits(data);
             }
 
             int label = 0;
@@ -54,6 +64,7 @@ namespace DepthGuess
             {
                 for (int x = 0; x < bmp.Width; x++)
                 {
+                    #region 同色探査部分
                     if (labelTable[y, x] == -1)
                     {
                         Stack<Point> sta = new Stack<Point>();
@@ -79,6 +90,7 @@ namespace DepthGuess
                         }
                         label++;
                     }
+                    #endregion
                 }
             }
 
@@ -99,30 +111,7 @@ namespace DepthGuess
                 return null;
             }
 
-            Bitmap bitmap = new Bitmap(bmp.Width, bmp.Height);
-            int val = 0;
-            for (int y = 0; y < bitmap.Height; y++)
-            {
-                for (int x = 0; x < bitmap.Width; x++)
-                {
-                    val = Math.Max(val, label[y, x]);
-                }
-            }
-            val++;
-            int c = Math.Max(byte.MaxValue / val, 16);
-
-            logWriter.write("分割数　　=" + val);
-            logWriter.write("色の変化量=" + c);
-
-            for (int y = 0; y < bitmap.Height; y++)
-            {
-                for (int x = 0; x < bitmap.Width; x++)
-                {
-                    int color = (label[y, x] * c) & byte.MaxValue;
-                    bitmap.SetPixel(x, y, Color.FromArgb(color, color, color));
-                }
-            }
-            logWriter.write("ラベルデータの画像作成が完了しました");
+            Bitmap bitmap = getLabelImage(label);
 
             return bitmap;
         }
@@ -151,15 +140,27 @@ namespace DepthGuess
 
             logWriter.write("分割数　　=" + val);
             logWriter.write("色の変化量=" + c);
-
-            for (int y = 0; y < bitmap.Height; y++)
+            
             {
-                for (int x = 0; x < bitmap.Width; x++)
+                BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+                byte[] buf = new byte[bitmap.Width * bitmap.Height * 4];
+                Marshal.Copy(data.Scan0, buf, 0, buf.Length);
+
+                for (int y = 0; y < bitmap.Height; y++)
                 {
-                    int color = (label[y, x] * c) & byte.MaxValue;
-                    bitmap.SetPixel(x, y, Color.FromArgb(color, color, color));
+                    for (int x = 0; x < bitmap.Width; x++)
+                    {
+                        int index = y * bitmap.Width * 4 + x * 4;
+                        int color = (label[y, x] * c) & byte.MaxValue;
+                        buf[index + 0] = buf[index + 1] = buf[index + 2] = (byte)color;
+                        buf[index + 3] = byte.MaxValue;
+                    }
                 }
+
+                Marshal.Copy(buf, 0, data.Scan0, buf.Length);
+                bitmap.UnlockBits(data);
             }
+
             logWriter.write("ラベルデータの画像作成が完了しました");
 
             return bitmap;

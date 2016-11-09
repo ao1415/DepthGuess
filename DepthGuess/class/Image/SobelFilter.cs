@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace DepthGuess
 {
@@ -28,14 +30,20 @@ namespace DepthGuess
             for (int i = 0; i < bmp.Length; i++)
                 bmp[i] = new byte[image.Height, image.Width];
 
+            Bitmap bitmap = new Bitmap(image);
+            BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+
+            byte[] buf = new byte[bitmap.Width * bitmap.Height * 4];
+            Marshal.Copy(data.Scan0, buf, 0, buf.Length);
+
             for (int y = 0; y < image.Height; y++)
             {
                 for (int x = 0; x < image.Width; x++)
                 {
-                    Color c = image.GetPixel(x, y); ;
-                    bmp[0][y, x] = c.R;
-                    bmp[1][y, x] = c.G;
-                    bmp[2][y, x] = c.B;
+                    //Color c = image.GetPixel(x, y); ;
+                    bmp[0][y, x] = buf[y * bitmap.Width * 4 + x * 4 + 0];
+                    bmp[1][y, x] = buf[y * bitmap.Width * 4 + x * 4 + 1];
+                    bmp[2][y, x] = buf[y * bitmap.Width * 4 + x * 4 + 2];
                 }
             }
 
@@ -86,8 +94,6 @@ namespace DepthGuess
             filterBmp[2, 2] = applyFilter(bmp2, xFilter[1]);
             filterBmp[2, 3] = applyFilter(bmp2, yFilter[1]);
 
-            Bitmap nImage = new Bitmap(image.Width, image.Height);
-
             for (int y = 0; y < image.Height; y++)
             {
                 for (int x = 0; x < image.Width; x++)
@@ -106,13 +112,18 @@ namespace DepthGuess
                     val = Math.Min(byte.MaxValue, val);
                     val = Math.Max(byte.MinValue, val);
 
-                    nImage.SetPixel(x, y, Color.FromArgb(val, val, val));
+                    buf[y * bitmap.Width * 4 + x * 4 + 0] = (byte)val;
+                    buf[y * bitmap.Width * 4 + x * 4 + 1] = (byte)val;
+                    buf[y * bitmap.Width * 4 + x * 4 + 2] = (byte)val;
                 }
             }
 
+            Marshal.Copy(buf, 0, data.Scan0, buf.Length);
+            bitmap.UnlockBits(data);
+
             logWriter.write("sobelフィルタが完了しました");
 
-            return nImage;
+            return bitmap;
         }
 
         private byte[,] applyFilter(byte[,] table, double[,] filter)
@@ -120,10 +131,10 @@ namespace DepthGuess
             int[,] next = new int[table.GetLength(0), table.GetLength(1)];
 
             Size filterSize = new Size(filter.GetLength(0) / 2, filter.GetLength(1) / 2);
-
-            for (int y = 1; y < table.GetLength(0) - 1; y++)
+            
+            for (int y = filterSize.Height; y < table.GetLength(0) - filterSize.Height; y++)
             {
-                for (int x = 1; x < table.GetLength(1) - 1; x++)
+                for (int x = filterSize.Width; x < table.GetLength(1) - filterSize.Width; x++)
                 {
                     for (int dy = 0; dy < filter.GetLength(0); dy++)
                     {

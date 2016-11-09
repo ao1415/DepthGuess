@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -27,16 +29,28 @@ namespace DepthGuess
                 return null;
             }
 
-            Bitmap bitmap = new Bitmap(bmp.Width, bmp.Height);
-            for (int y = 0; y < bmp.Height; y++)
+            Bitmap bitmap = new Bitmap(bmp);
+            BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+
+            byte[] buf = new byte[bitmap.Width * bitmap.Height * 4];
+            Marshal.Copy(data.Scan0, buf, 0, buf.Length);
+
+            for (int i = 0; i < buf.Length; i += 4)
             {
-                for (int x = 0; x < bmp.Width; x++)
+                if (buf[i] >= threshold)
                 {
-                    Color c = bmp.GetPixel(x, y);
-                    if (c.R >= threshold) bitmap.SetPixel(x, y, Color.White);
-                    else bitmap.SetPixel(x, y, Color.Black);
+                    buf[i + 0] = buf[i + 1] = buf[i + 2] = 255;
+                    buf[i + 3] = 255;
+                }
+                else
+                {
+                    buf[i + 0] = buf[i + 1] = buf[i + 2] = 0;
+                    buf[i + 3] = 255;
                 }
             }
+
+            Marshal.Copy(buf, 0, data.Scan0, buf.Length);
+            bitmap.UnlockBits(data);
 
             logWriter.write("二値化処理が完了しました");
             return bitmap;

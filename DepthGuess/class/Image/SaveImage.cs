@@ -63,6 +63,39 @@ namespace DepthGuess
             logWriter.write("三次元画像を保存しました");
             logWriter.write("path=" + path);
         }
+        public void saveBinary(Bitmap image, int[,] depth, string path)
+        {
+            logWriter.write("三次元画像を保存します");
+
+            try
+            {
+                using (BinaryWriter bw = new BinaryWriter(File.OpenWrite(path)))
+                {
+                    bw.Write(image.Width);
+                    bw.Write(image.Height);
+                    for (int y = 0; y < image.Height; y++)
+                    {
+                        for (int x = 0; x < image.Width; x++)
+                        {
+                            Color c = image.GetPixel(x, y);
+                            bw.Write(c.R);
+                            bw.Write(c.G);
+                            bw.Write(c.B);
+                            bw.Write(c.A);
+                            bw.Write(depth[y, x]);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                logWriter.writeError("三次元画像の保存に失敗しました");
+                return;
+            }
+
+            logWriter.write("三次元画像を保存しました");
+            logWriter.write("path=" + path);
+        }
 
     }
 }
