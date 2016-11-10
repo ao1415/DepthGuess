@@ -9,15 +9,22 @@ using System.Threading.Tasks;
 
 namespace DepthGuess
 {
+    /// <summary>二値化処理を行う</summary>
     class ImageThreshold
     {
         LogWriter logWriter;
 
+        /// <summary>コンストラクタ</summary>
+        /// <param name="writer"><see cref="LogWriter"/></param>
         public ImageThreshold(LogWriter writer)
         {
             logWriter = writer;
         }
 
+        /// <summary>二値化処理を行う</summary>
+        /// <param name="bmp">処理を行いたい画像</param>
+        /// <param name="threshold">閾値</param>
+        /// <returns>二値化された<see cref="Bitmap"/></returns>
         public Bitmap getImage(Bitmap bmp, byte threshold)
         {
             logWriter.write("二値化処理を行います");

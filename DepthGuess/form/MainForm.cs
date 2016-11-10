@@ -115,14 +115,14 @@ namespace DepthGuess
             Bitmap mediancutImage = medianCut.getImage(originalImage, out pallet);
             new ImageWindow("減色画像", mediancutImage, logWriter);
 
-            Bitmap thresholdImage = threshold.getImage(mediancutImage, 127);
+            Bitmap thresholdImage = threshold.getImage(mediancutImage, 128);
             new ImageWindow("二値化画像", thresholdImage, logWriter);
 
             int[,] label = labeling.getLabelTable(thresholdImage);
             Bitmap labelImage = labeling.getLabelImage(label);
             new ImageWindow("ラベリング画像", labelImage, logWriter);
 
-            //saveImage.saveBinary(originalImage, label, "./depthImage.rgbad");
+            saveImage.saveBinary(originalImage, label, "./depthImage.rgbad");
 
             /*
             Bitmap edgeImage1 = edge.getImage(mediancutImage);

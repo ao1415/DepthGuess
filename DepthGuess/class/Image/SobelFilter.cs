@@ -5,15 +5,21 @@ using System.Runtime.InteropServices;
 
 namespace DepthGuess
 {
+    /// <summary>sobelフィルタを画像に適用する</summary>
     class SobelFilter
     {
         private LogWriter logWriter;
 
+        /// <summary>コンストラクタ</summary>
+        /// <param name="writer"><see cref="LogWriter"/></param>
         public SobelFilter(LogWriter writer)
         {
             logWriter = writer;
         }
 
+        /// <summary>フィルターを適用する</summary>
+        /// <param name="image">適用する画像</param>
+        /// <returns>適用された<see cref="Bitmap"/></returns>
         public Bitmap getImage(Bitmap image)
         {
 

@@ -61,6 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Class\Guess\Guess01.cs" />
     <Compile Include="Class\Image\EdgeExtraction.cs" />
     <Compile Include="Class\Image\ImageThreshold.cs" />
     <Compile Include="Class\Image\Labeling.cs" />

@@ -9,15 +9,21 @@ using System.Threading.Tasks;
 
 namespace DepthGuess
 {
+    /// <summary>画像のラベルを作成する</summary>
     class Labeling
     {
         LogWriter logWriter;
 
+        /// <summary>コンストラクタ</summary>
+        /// <param name="writer"><see cref="LogWriter"/></param>
         public Labeling(LogWriter writer)
         {
             logWriter = writer;
         }
 
+        /// <summary>画像からラベルを作成する</summary>
+        /// <param name="bmp">ラベルを作成したい画像</param>
+        /// <returns>ラベル情報<see cref="int[,]"/></returns>
         public int[,] getLabelTable(Bitmap bmp)
         {
             logWriter.write("ラベリング処理を行います");
@@ -98,6 +104,9 @@ namespace DepthGuess
             return labelTable;
         }
 
+        /// <summary>画像からラベル情報を視覚化した画像を作成する</summary>
+        /// <param name="bmp">視覚化したい画像</param>
+        /// <returns>視覚化された画像<see cref="Bitmap"></returns>
         public Bitmap getLabelImage(Bitmap bmp)
         {
             int[,] label = getLabelTable(bmp);
@@ -115,6 +124,9 @@ namespace DepthGuess
 
             return bitmap;
         }
+        /// <summary>ラベル情報を視覚化する</summary>
+        /// <param name="label">視覚化したいラベルデータ</param>
+        /// <returns>視覚化された画像<see cref="Bitmap"></returns>
         public Bitmap getLabelImage(int[,] label)
         {
             logWriter.write("ラベルデータの画像作成を行います");

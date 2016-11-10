@@ -8,15 +8,21 @@ using System.Threading.Tasks;
 
 namespace DepthGuess
 {
+    /// <summary>画像をファイルに保存する</summary>
     class SaveImage
     {
         LogWriter logWriter;
 
+        /// <summary>コンストラクタ</summary>
+        /// <param name="writer"><see cref="LogWriter"/></param>
         public SaveImage(LogWriter writer)
         {
             logWriter = writer;
         }
 
+        /// <summary>画像を保存する</summary>
+        /// <param name="image">保存したい画像</param>
+        /// <param name="path">保存する場所</param>
         public void save(Image image, string path)
         {
             logWriter.write("画像を保存します");
@@ -35,6 +41,10 @@ namespace DepthGuess
             logWriter.write("path=" + path);
         }
 
+        /// <summary>深さ情報を持った画像を保存する</summary>
+        /// <param name="image">保存したい画像</param>
+        /// <param name="depth">画像の深さデータ</param>
+        /// <param name="path">保存したい場所</param>
         public void save(Bitmap image, int[,] depth, string path)
         {
             logWriter.write("三次元画像を保存します");
@@ -63,6 +73,10 @@ namespace DepthGuess
             logWriter.write("三次元画像を保存しました");
             logWriter.write("path=" + path);
         }
+        /// <summary>深さ情報を持った画像のバイナリデータを保存する</summary>
+        /// <param name="image">保存したい画像</param>
+        /// <param name="depth">画像の深さデータ</param>
+        /// <param name="path">保存したい場所</param>
         public void saveBinary(Bitmap image, int[,] depth, string path)
         {
             logWriter.write("三次元画像を保存します");

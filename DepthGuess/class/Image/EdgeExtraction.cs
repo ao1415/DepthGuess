@@ -9,15 +9,21 @@ using System.Threading.Tasks;
 
 namespace DepthGuess
 {
+    /// <summary>エッジを抽出する</summary>
     class EdgeExtraction
     {
         LogWriter logWriter;
 
+        /// <summary>コンストラクタ</summary>
+        /// <param name="writer"><see cref="LogWriter"/></param>
         public EdgeExtraction(LogWriter writer)
         {
             logWriter = writer;
         }
 
+        /// <summary>エッジを抽出する</summary>
+        /// <param name="bmp">エッジ抽出を行いたい画像</param>
+        /// <returns>抽出された<see cref="Bitmap"/> </returns>
         public Bitmap getImage(Bitmap bmp)
         {
             logWriter.write("エッジ抽出を行います");

@@ -97,7 +97,7 @@ namespace DepthGuess
         }
 
         /// <summary>ウインドウを表示する</summary>
-        public void show()
+        private void show()
         {
             logWriter.write(form.Text + "を表示しました");
             form.Show();
