@@ -11,7 +11,7 @@ namespace DepthGuess
 
         /// <summary>コンストラクタ</summary>
         /// <param name="textBox">テキストボックス</param>
-        public LogWriter(ref RichTextBox textBox)
+        public LogWriter(RichTextBox textBox)
         {
             logTextBox = textBox;
         }
@@ -38,6 +38,18 @@ namespace DepthGuess
             logTextBox.SelectionLength = 0;
             logTextBox.SelectionColor = color;
             logTextBox.AppendText(text + "\n");
+            logTextBox.Refresh();
+        }
+
+        /// <summary>テキストボックスの文字列を全削除する</summary>
+        public void clear()
+        {
+            logTextBox.Clear();
+        }
+
+        /// <summary>テキストボックスを強制的に再描写する</summary>
+        public void refresh()
+        {
             logTextBox.Refresh();
         }
 

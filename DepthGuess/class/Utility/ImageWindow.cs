@@ -53,12 +53,24 @@ namespace DepthGuess
             item1.Name = "saveImageMenuItem";
             item1.Size = new Size(108, 22);
             item1.Text = "名前を付けて保存...";
-            item1.Click += new EventHandler(saveImage_Click);
+            item1.Click += new EventHandler((object sender, EventArgs e) =>
+            {
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    string path = dialog.FileName;
+                    SaveImage saveImage = new SaveImage(logWriter);
+                    saveImage.save(img, path);
+                }
+            });
 
             item2.Name = "resizeImageMenuItem";
             item2.Size = new Size(108, 22);
             item2.Text = "元の大きさに戻す";
-            item2.Click += new EventHandler(resizeImage_Click);
+            item2.Click += new EventHandler((object sender, EventArgs e) =>
+            {
+                form.ClientSize = img.Size;
+            });
+
 
             form.SuspendLayout();
 
@@ -104,21 +116,6 @@ namespace DepthGuess
             //無理やり表示させる
             form.Refresh();
         }
-
-        private void saveImage_Click(object sender, EventArgs e)
-        {
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                string path = dialog.FileName;
-                SaveImage saveImage = new SaveImage(logWriter);
-                saveImage.save(img, path);
-            }
-        }
-
-        private void resizeImage_Click(object sender, EventArgs e)
-        {
-            form.ClientSize = img.Size;
-        }
-
+        
     }
 }
