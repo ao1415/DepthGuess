@@ -79,12 +79,6 @@ namespace DepthGuess
         {
             logWriter.clear();
 
-            Func<int> func1 = () => { return 3; };
-            Func<int, int> func2 = (int n) => { return n * 2; };
-
-            logWriter.write(func1().ToString());
-            logWriter.write(func2(5).ToString());
-
             Action process = () =>
             {
                 logWriter.write("処理を開始します");
@@ -108,11 +102,11 @@ namespace DepthGuess
                 Bitmap thresholdImage = threshold.getImage(mediancutImage, 128);
                 new ImageWindow("二値化画像", thresholdImage, logWriter);
 
-                int[,] label = labeling.getLabelTable(thresholdImage);
+                LabelStructure label = labeling.getLabelTable(thresholdImage);
                 Bitmap labelImage = labeling.getLabelImage(label);
                 new ImageWindow("ラベリング画像", labelImage, logWriter);
 
-                saveImage.saveBinary(originalImage, label, "./depthImage.rgbad");
+                saveImage.saveBinary(originalImage, label.data(), "./depthImage.rgbad");
 
                 /*
                 Bitmap edgeImage1 = edge.getImage(mediancutImage);
@@ -182,4 +176,19 @@ namespace DepthGuess
             Properties.Settings.Default.Save();
         }
     }
+
+    static class Config
+    {
+        //*
+        //八近傍
+        private static Point[] direction = new Point[] { new Point(-1, -1), new Point(0, -1), new Point(1, -1), new Point(-1, 0), new Point(1, 0), new Point(-1, 1), new Point(0, 1), new Point(1, 1) };
+        /*/
+        //四近傍
+        private static Point[] direction = new Point[] { new Point(0, -1), new Point(-1, 0), new Point(1, 0), new Point(0, 1) };
+        //*/
+
+        public static Point[] Direction { get { return direction; } }
+
+    }
+
 }

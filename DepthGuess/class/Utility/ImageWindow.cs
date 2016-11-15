@@ -116,6 +116,6 @@ namespace DepthGuess
             //無理やり表示させる
             form.Refresh();
         }
-        
+
     }
 }

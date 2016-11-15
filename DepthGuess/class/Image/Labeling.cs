@@ -24,7 +24,7 @@ namespace DepthGuess
         /// <summary>画像からラベルを作成する</summary>
         /// <param name="bmp">ラベルを作成したい画像</param>
         /// <returns>ラベル情報<see cref="int[,]"/></returns>
-        public int[,] getLabelTable(Bitmap bmp)
+        public LabelStructure getLabelTable(Bitmap bmp)
         {
             logWriter.write("ラベリング処理を行います");
 
@@ -37,17 +37,7 @@ namespace DepthGuess
 
             int[,] labelTable = new int[bmp.Height, bmp.Width];
             Color[,] colorTable = new Color[bmp.Height, bmp.Width];
-
-            Point[] direction;
-
-            //*
-            //八近傍
-            direction = new Point[] { new Point(-1, -1), new Point(0, -1), new Point(1, -1), new Point(-1, 0), new Point(1, 0), new Point(-1, 1), new Point(0, 1), new Point(1, 1) };
-            /*/
-            //四近傍
-            direction = new Point[] { new Point(0, -1), new Point(-1, 0), new Point(1, 0), new Point(0, 1) };
-            //*/
-
+            
             {
                 BitmapData data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
                 byte[] buf = new byte[bmp.Width * bmp.Height * 4];
@@ -81,7 +71,7 @@ namespace DepthGuess
                         while (sta.Count > 0)
                         {
                             Point p = sta.Pop();
-                            foreach (var dire in direction)
+                            foreach (var dire in Config.Direction)
                             {
                                 Point point = new Point(p.X + dire.X, p.Y + dire.Y);
                                 if (0 <= point.X && point.X < bmp.Width && 0 <= point.Y && point.Y < bmp.Height)
@@ -101,7 +91,7 @@ namespace DepthGuess
             }
 
             logWriter.write("ラベリング処理が完了しました");
-            return labelTable;
+            return new LabelStructure(labelTable);
         }
 
         /// <summary>画像からラベル情報を視覚化した画像を作成する</summary>
@@ -109,7 +99,7 @@ namespace DepthGuess
         /// <returns>視覚化された画像<see cref="Bitmap"></returns>
         public Bitmap getLabelImage(Bitmap bmp)
         {
-            int[,] label = getLabelTable(bmp);
+            var label = getLabelTable(bmp);
 
             logWriter.write("ラベルデータの画像作成を行います");
 
@@ -127,7 +117,7 @@ namespace DepthGuess
         /// <summary>ラベル情報を視覚化する</summary>
         /// <param name="label">視覚化したいラベルデータ</param>
         /// <returns>視覚化された画像<see cref="Bitmap"></returns>
-        public Bitmap getLabelImage(int[,] label)
+        public Bitmap getLabelImage(LabelStructure label)
         {
             logWriter.write("ラベルデータの画像作成を行います");
 
@@ -138,7 +128,7 @@ namespace DepthGuess
                 return null;
             }
 
-            Bitmap bitmap = new Bitmap(label.GetLength(1), label.GetLength(0));
+            Bitmap bitmap = new Bitmap(label.Width, label.Height);
             int val = 0;
             for (int y = 0; y < bitmap.Height; y++)
             {
@@ -147,12 +137,12 @@ namespace DepthGuess
                     val = Math.Max(val, label[y, x]);
                 }
             }
-            val++;
+            val += 1;
             int c = Math.Max(byte.MaxValue / val, 16);
 
             logWriter.write("分割数　　=" + val);
             logWriter.write("色の変化量=" + c);
-            
+
             {
                 BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
                 byte[] buf = new byte[bitmap.Width * bitmap.Height * 4];

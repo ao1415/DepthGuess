@@ -65,10 +65,12 @@
     <Compile Include="Class\Image\EdgeExtraction.cs" />
     <Compile Include="Class\Image\ImageThreshold.cs" />
     <Compile Include="Class\Image\Labeling.cs" />
+    <Compile Include="Class\Image\RingDetection.cs" />
     <Compile Include="Class\Image\SaveImage.cs" />
     <Compile Include="Class\Image\SobelFilter.cs" />
     <Compile Include="Class\Utility\ImageWindow.cs" />
     <Compile Include="Class\Image\LoadImage.cs" />
+    <Compile Include="Class\Utility\LabelStructure.cs" />
     <Compile Include="Class\Utility\LogWriter.cs" />
     <Compile Include="Form\Form1.cs">
       <SubType>Form</SubType>

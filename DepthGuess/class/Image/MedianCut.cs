@@ -139,10 +139,7 @@ namespace DepthGuess
             }
             #endregion
 
-            selectColors = new Color[pallete.Count];
-
-            for (int i = 0; i < pallete.Count; i++)
-                selectColors[i] = pallete[i];
+            selectColors = pallete.ToArray();
 
             #region 画像をパレットの色で置き換える
             for (int y = 0; y < image.Height; y++)

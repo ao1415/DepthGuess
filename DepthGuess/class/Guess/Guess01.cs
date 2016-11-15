@@ -23,19 +23,6 @@ namespace DepthGuess
 
             return depth;
         }
-
-        private bool hasHole(int[,] label, int number)
-        {
-            for (int y = 0; y < label.GetLength(0); y++)
-            {
-                for (int x = 0; x < label.GetLength(1); x++)
-                {
-
-                }
-            }
-
-            return false;
-        }
-
+        
     }
 }
