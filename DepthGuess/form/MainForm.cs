@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -19,7 +20,7 @@ namespace DepthGuess
             styleSetup();
 #endif
 
-            logWriter = new LogWriter(logTextBox);
+            logWriter = new LogWriter(this, logTextBox);
 
         }
 
@@ -136,7 +137,10 @@ namespace DepthGuess
 
             #region プロセス実行
 #if DEBUG
-            process();
+            Thread thread = new Thread(new ThreadStart(process));
+            thread.IsBackground = true;
+            thread.Start();
+            //process();
 #else
             try
             {

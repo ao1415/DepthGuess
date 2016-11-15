@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace DepthGuess
@@ -8,13 +9,6 @@ namespace DepthGuess
     /// <summary>画像を表示するウインドウ</summary>
     class ImageWindow
     {
-        private Form form;
-        private Image img;
-        private PictureBox pictureBox;
-        private ContextMenuStrip menu;
-        private ToolStripMenuItem item1;
-        private ToolStripMenuItem item2;
-        private SaveFileDialog dialog;
         private LogWriter logWriter;
 
         /// <summary>コンストラクタ</summary>
@@ -23,7 +17,7 @@ namespace DepthGuess
         /// <param name="writer"><see cref="LogWriter"/></param>
         public ImageWindow(string text, Image image, LogWriter writer)
         {
-            InitializeComponent(text, image);
+
             logWriter = writer;
 
             if (image == null)
@@ -32,89 +26,133 @@ namespace DepthGuess
                 logWriter.writeError("ダミーデータを表示します");
             }
 
-            show();
+            logWriter.write(text + "を表示しました");
+
+            //Form form = new PictureForm(text, image, logWriter);
+            //form.Show();
+            //form.Refresh();
+
+
+            Thread thread = new Thread(new ParameterizedThreadStart((object data) =>
+            {
+                Form form = (Form)data;
+
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.Run(form);
+            }));
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start(new PictureForm((string)text.Clone(), (Image)image.Clone(), logWriter));
+            
         }
 
-        private void InitializeComponent(string text, Image image)
+        private class PictureForm : Form
         {
-            form = new Form();
-            pictureBox = new PictureBox();
-            menu = new ContextMenuStrip();
-            item1 = new ToolStripMenuItem();
-            item2 = new ToolStripMenuItem();
-            dialog = new SaveFileDialog();
-            img = image;
 
-            #region フォームの初期設定
-            menu.Items.AddRange(new ToolStripMenuItem[] { item1, item2 });
-            menu.Name = "contextMenu";
-            menu.Size = new Size(109, 70);
-
-            item1.Name = "saveImageMenuItem";
-            item1.Size = new Size(108, 22);
-            item1.Text = "名前を付けて保存...";
-            item1.Click += new EventHandler((object sender, EventArgs e) =>
+            private LogWriter logWriter;
+            public PictureForm(string text, Image image, LogWriter writer)
             {
-                if (dialog.ShowDialog() == DialogResult.OK)
+                InitializeComponent(text, image);
+                logWriter = writer;
+            }
+
+            /// <summary>
+            /// 必要なデザイナー変数です。
+            /// </summary>
+            private IContainer components = null;
+
+            /// <summary>
+            /// 使用中のリソースをすべてクリーンアップします。
+            /// </summary>
+            /// <param name="disposing">マネージ リソースを破棄する場合は true を指定し、その他の場合は false を指定します。</param>
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing && (components != null))
                 {
-                    string path = dialog.FileName;
-                    SaveImage saveImage = new SaveImage(logWriter);
-                    saveImage.save(img, path);
+                    components.Dispose();
                 }
-            });
+                base.Dispose(disposing);
+            }
 
-            item2.Name = "resizeImageMenuItem";
-            item2.Size = new Size(108, 22);
-            item2.Text = "元の大きさに戻す";
-            item2.Click += new EventHandler((object sender, EventArgs e) =>
+            /// <summary>
+            /// デザイナー サポートに必要なメソッドです。このメソッドの内容を
+            /// コード エディターで変更しないでください。
+            /// </summary>
+            private void InitializeComponent(string text, Image image)
             {
-                form.ClientSize = img.Size;
-            });
+                pictureBox = new PictureBox();
+                menu = new ContextMenuStrip();
+                saveItem = new ToolStripMenuItem();
+                sizeItem = new ToolStripMenuItem();
+                dialog = new SaveFileDialog();
+                img = image;
+
+                menu.Items.AddRange(new ToolStripMenuItem[] { saveItem, sizeItem });
+                menu.Name = "contextMenu";
+                menu.Size = new Size(109, 70);
+
+                saveItem.Name = "saveImageMenuItem";
+                saveItem.Size = new Size(108, 22);
+                saveItem.Text = "名前を付けて保存...";
+                saveItem.Click += new EventHandler((object sender, EventArgs e) =>
+                {
+                    if (dialog.ShowDialog() == DialogResult.OK)
+                    {
+                        string path = dialog.FileName;
+                        SaveImage saveImage = new SaveImage(logWriter);
+                        saveImage.save(img, path);
+                    }
+                });
+
+                sizeItem.Name = "resizeImageMenuItem";
+                sizeItem.Size = new Size(108, 22);
+                sizeItem.Text = "元の大きさに戻す";
+                sizeItem.Click += new EventHandler((object sender, EventArgs e) =>
+                {
+                    ClientSize = img.Size;
+                });
 
 
-            form.SuspendLayout();
+                SuspendLayout();
 
-            pictureBox.Location = new Point(0, 0);
-            pictureBox.Name = "pictureBox";
-            if (img == null)
-                pictureBox.Size = new Size(200, 200);
-            else
-                pictureBox.Size = img.Size;
-            pictureBox.Image = img;
-            pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox.Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Bottom;
+                pictureBox.Location = new Point(0, 0);
+                pictureBox.Name = "pictureBox";
+                if (img == null)
+                    pictureBox.Size = new Size(200, 200);
+                else
+                    pictureBox.Size = img.Size;
+                pictureBox.Image = img;
+                pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+                pictureBox.Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Bottom;
 
-            dialog.FileName = text;
-            dialog.Filter = "画像ファイル|*.png";
+                dialog.FileName = text;
+                dialog.Filter = "画像ファイル|*.png";
 
-            form.AutoScaleDimensions = new SizeF(6F, 12F);
-            form.AutoScaleMode = AutoScaleMode.Font;
-            form.ClientSize = pictureBox.Size;
-            form.Controls.Add(pictureBox);
-            form.ShowIcon = false;
-            form.ContextMenuStrip = menu;
-            form.Name = "ImageForm";
-            form.Text = text;
+                AutoScaleDimensions = new SizeF(6F, 12F);
+                AutoScaleMode = AutoScaleMode.Font;
+                ClientSize = pictureBox.Size;
+                Controls.Add(pictureBox);
+                ShowIcon = false;
+                ContextMenuStrip = menu;
+                Name = "ImageForm";
+                Text = text;
 
 #if BLACK_STYLE
-            form.BackColor = Color.FromArgb(30, 30, 30);
+                BackColor = Color.FromArgb(30, 30, 30);
 #endif
 
-            ((ISupportInitialize)(pictureBox)).EndInit();
-            menu.ResumeLayout(false);
-            form.ResumeLayout(false);
-            form.PerformLayout();
-            #endregion
+                ((ISupportInitialize)(pictureBox)).EndInit();
+                menu.ResumeLayout(false);
+                ResumeLayout(false);
+                PerformLayout();
+            }
 
-        }
-
-        /// <summary>ウインドウを表示する</summary>
-        private void show()
-        {
-            logWriter.write(form.Text + "を表示しました");
-            form.Show();
-            //無理やり表示させる
-            form.Refresh();
+            private Image img;
+            private PictureBox pictureBox;
+            private ContextMenuStrip menu;
+            private ToolStripMenuItem saveItem;
+            private ToolStripMenuItem sizeItem;
+            private SaveFileDialog dialog;
         }
 
     }

@@ -8,19 +8,24 @@ namespace DepthGuess
     class LogWriter
     {
         private RichTextBox logTextBox;
+        private Form form;
+
+        private delegate void updateTextBoxDelegate(string text, Color color);
 
         /// <summary>コンストラクタ</summary>
         /// <param name="textBox">テキストボックス</param>
-        public LogWriter(RichTextBox textBox)
+        public LogWriter(Form mainForm, RichTextBox textBox)
         {
             logTextBox = textBox;
+            form = mainForm;
         }
 
         /// <summary>通常のログを書き出す</summary>
         /// <param name="text">メッセージ</param>
         public void write(string text)
         {
-            write(text, Color.Green);
+            //write(text, Color.Green);
+            form.BeginInvoke(new updateTextBoxDelegate(write), new object[] { text, Color.Green });
             Console.Out.WriteLine(text);
         }
 
@@ -28,7 +33,8 @@ namespace DepthGuess
         /// <param name="text">メッセージ</param>
         public void writeError(string text)
         {
-            write(text, Color.Red);
+            //write(text, Color.Red);
+            form.BeginInvoke(new updateTextBoxDelegate(write), new object[] { text, Color.Red });
             Console.Error.WriteLine(text);
         }
 
