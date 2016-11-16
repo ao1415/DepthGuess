@@ -12,6 +12,8 @@ namespace DepthGuess
     {
         private LogWriter logWriter;
 
+        private Thread processThread;
+
         public MainForm()
         {
             InitializeComponent();
@@ -137,14 +139,23 @@ namespace DepthGuess
 
             #region プロセス実行
 #if DEBUG
-            Thread thread = new Thread(new ThreadStart(process));
-            thread.IsBackground = true;
-            thread.Start();
+            if (processThread != null && processThread.IsAlive)
+            {
+                MessageBox.Show("処理が終了していません", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            else
+            {
+                processThread = new Thread(new ThreadStart(process));
+                processThread.IsBackground = true;
+                processThread.Start();
+            }
             //process();
 #else
             try
             {
-                process();
+                Thread thread = new Thread(new ThreadStart(process));
+                thread.IsBackground = true;
+                thread.Start();
             }
             catch (Exception ex)
             {
@@ -168,6 +179,13 @@ namespace DepthGuess
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            if (processThread != null && processThread.IsAlive)
+            {
+                MessageBox.Show("処理が終了していません", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                e.Cancel = true;
+                return;
+            }
+            
             if (WindowState == FormWindowState.Normal)
                 Properties.Settings.Default.Bounds = Bounds;
             else
@@ -178,6 +196,8 @@ namespace DepthGuess
             Properties.Settings.Default.FilePath = fileTextBox.Text;
 
             Properties.Settings.Default.Save();
+
+            Application.Exit();
         }
     }
 

@@ -10,7 +10,7 @@ namespace DepthGuess
         private RichTextBox logTextBox;
         private Form form;
 
-        private delegate void updateTextBoxDelegate(string text, Color color);
+        private delegate void writeTextBoxDelegate(string text, Color color);
 
         /// <summary>コンストラクタ</summary>
         /// <param name="textBox">テキストボックス</param>
@@ -25,7 +25,7 @@ namespace DepthGuess
         public void write(string text)
         {
             //write(text, Color.Green);
-            form.BeginInvoke(new updateTextBoxDelegate(write), new object[] { text, Color.Green });
+            form.BeginInvoke(new writeTextBoxDelegate(write), new object[] { text, Color.Green });
             Console.Out.WriteLine(text);
         }
 
@@ -34,7 +34,7 @@ namespace DepthGuess
         public void writeError(string text)
         {
             //write(text, Color.Red);
-            form.BeginInvoke(new updateTextBoxDelegate(write), new object[] { text, Color.Red });
+            form.BeginInvoke(new writeTextBoxDelegate(write), new object[] { text, Color.Red });
             Console.Error.WriteLine(text);
         }
 
@@ -47,17 +47,20 @@ namespace DepthGuess
             logTextBox.Refresh();
         }
 
+        private delegate void updateTextBoxDelegate();
         /// <summary>テキストボックスの文字列を全削除する</summary>
         public void clear()
         {
-            logTextBox.Clear();
+            form.BeginInvoke(new updateTextBoxDelegate(() => { logTextBox.Clear(); }));
         }
 
         /// <summary>テキストボックスを強制的に再描写する</summary>
         public void refresh()
         {
-            logTextBox.Refresh();
+            form.BeginInvoke(new updateTextBoxDelegate(() => { logTextBox.Refresh(); }));
         }
+
+        public Form MainForm { get { return form; } }
 
     }
 }

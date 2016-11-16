@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Threading;
@@ -32,20 +33,19 @@ namespace DepthGuess
             //form.Show();
             //form.Refresh();
 
-
+            PictureForm form = new PictureForm((string)text.Clone(), (Image)image.Clone(), logWriter);
+            
             Thread thread = new Thread(new ParameterizedThreadStart((object data) =>
             {
-                Form form = (Form)data;
-
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(form);
+                Application.Run((Form)data);
             }));
             thread.SetApartmentState(ApartmentState.STA);
-            thread.Start(new PictureForm((string)text.Clone(), (Image)image.Clone(), logWriter));
-            
-        }
+            thread.Start(form);
 
+        }
+        
         private class PictureForm : Form
         {
 
