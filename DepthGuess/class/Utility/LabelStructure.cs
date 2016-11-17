@@ -44,7 +44,7 @@ namespace DepthGuess
         public int Width { get { return width; } }
         public int Height { get { return height; } }
 
-        public int[,] data() { return label; }
+        public int[,] Label { get { return label; } }
 
     }
 }

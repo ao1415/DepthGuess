@@ -27,15 +27,15 @@ namespace DepthGuess
         /// <param name="image">入力画像</param>
         /// <param name="selectColors">カラーパレット</param>
         /// <returns>出力画像</returns>
-        public Bitmap getImage(Bitmap image, out Color[] selectColors)
+        public Bitmap GetImage(Bitmap image, out Color[] selectColors)
         {
-            logWriter.write("減色処理を開始します");
+            logWriter.Write("減色処理を開始します");
 
             if (image == null)
             {
                 selectColors = null;
-                logWriter.writeError("画像が存在しません");
-                logWriter.writeError("減色処理を中止します");
+                logWriter.WriteError("画像が存在しません");
+                logWriter.WriteError("減色処理を中止します");
                 return null;
             }
 
@@ -80,7 +80,7 @@ namespace DepthGuess
             #endregion
 
             List<Color> pallete = new List<Color>();
-            pallete.Add(getColorAverage(colors));
+            pallete.Add(GetColorAverage(colors));
 
             #region パレットの作成
             for (int i = 1; i < ColorNumber; i++)
@@ -126,8 +126,8 @@ namespace DepthGuess
                 foreach (var c in tmp1)
                     colors.Add(c);
 
-                pallete.Add(getColorAverage(tmp1));
-                pallete.Add(getColorAverage(tmp2));
+                pallete.Add(GetColorAverage(tmp1));
+                pallete.Add(GetColorAverage(tmp2));
 
                 switch (colorIndex)
                 {
@@ -152,7 +152,7 @@ namespace DepthGuess
                     Color nearColor = Color.Black;
                     foreach (var c in pallete)
                     {
-                        double r = getColorRange(color, c);
+                        double r = GetColorRange(color, c);
                         if (minRange > r)
                         {
                             minRange = r;
@@ -171,22 +171,22 @@ namespace DepthGuess
 
             #endregion
 
-            logWriter.write("減色処理が完了しました");
-            logWriter.write("パレット数=" + selectColors.Length);
+            logWriter.Write("減色処理が完了しました");
+            logWriter.Write("パレット数=" + selectColors.Length);
             for (int i = 0; i < selectColors.Length; i++)
-                logWriter.write(string.Format("{0,2}番目のパレット=Color [A={1,3}, R={2,3}, G={3,3}, B={4,3}]", (i + 1), selectColors[i].A, selectColors[i].R, selectColors[i].G, selectColors[i].B));
+                logWriter.Write(string.Format("{0,2}番目のパレット=Color [A={1,3}, R={2,3}, G={3,3}, B={4,3}]", (i + 1), selectColors[i].A, selectColors[i].R, selectColors[i].G, selectColors[i].B));
 
             return bitmap;
         }
 
-        private double getColorRange(Color c1, Color c2)
+        private double GetColorRange(Color c1, Color c2)
         {
             int dr = c1.R - c2.R;
             int dg = c1.G - c2.G;
             int db = c1.B - c2.B;
             return (int)Math.Sqrt(dr * dr + dg * dg + db * db);
         }
-        private Color getColorAverage(List<Color> colors)
+        private Color GetColorAverage(List<Color> colors)
         {
             if (colors.Count == 0)
                 return Color.FromArgb(0, 0, 0);

@@ -24,14 +24,14 @@ namespace DepthGuess
         /// <summary>エッジを抽出する</summary>
         /// <param name="bmp">エッジ抽出を行いたい画像</param>
         /// <returns>抽出された<see cref="Bitmap"/> </returns>
-        public Bitmap getImage(Bitmap bmp)
+        public Bitmap GetImage(Bitmap bmp)
         {
-            logWriter.write("エッジ抽出を行います");
+            logWriter.Write("エッジ抽出を行います");
 
             if (bmp == null)
             {
-                logWriter.writeError("画像が存在しません");
-                logWriter.writeError("エッジ抽出を中止します");
+                logWriter.WriteError("画像が存在しません");
+                logWriter.WriteError("エッジ抽出を中止します");
                 return null;
             }
 
@@ -67,7 +67,7 @@ namespace DepthGuess
             Marshal.Copy(buf, 0, data.Scan0, buf.Length);
             bitmap.UnlockBits(data);
 
-            logWriter.write("エッジ抽出が完了しました");
+            logWriter.Write("エッジ抽出が完了しました");
             return bitmap;
         }
 

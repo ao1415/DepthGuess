@@ -15,7 +15,7 @@ namespace DepthGuess
             logWriter = writer;
         }
 
-        public int[,] getDepth(int[,] label)
+        public int[,] GetDepth(int[,] label)
         {
             int[,] depth = label;
 

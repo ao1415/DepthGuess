@@ -23,11 +23,11 @@ namespace DepthGuess
 
             if (image == null)
             {
-                logWriter.writeError(text + "が存在しません");
-                logWriter.writeError("ダミーデータを表示します");
+                logWriter.WriteError(text + "が存在しません");
+                logWriter.WriteError("ダミーデータを表示します");
             }
 
-            logWriter.write(text + "を表示しました");
+            logWriter.Write(text + "を表示しました");
 
             //Form form = new PictureForm(text, image, logWriter);
             //form.Show();
@@ -100,7 +100,7 @@ namespace DepthGuess
                     {
                         string path = dialog.FileName;
                         SaveImage saveImage = new SaveImage(logWriter);
-                        saveImage.save(img, path);
+                        saveImage.Save(img, path);
                     }
                 });
 

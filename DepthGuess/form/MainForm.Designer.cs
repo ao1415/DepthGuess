@@ -51,7 +51,7 @@
             this.fileSelectButton.TabIndex = 1;
             this.fileSelectButton.Text = "ファイルの選択";
             this.fileSelectButton.UseVisualStyleBackColor = true;
-            this.fileSelectButton.Click += new System.EventHandler(this.fileSelectButton_Click);
+            this.fileSelectButton.Click += new System.EventHandler(this.FileSelectButton_Click);
             // 
             // startButton
             // 
@@ -61,7 +61,7 @@
             this.startButton.TabIndex = 2;
             this.startButton.Text = "実行";
             this.startButton.UseVisualStyleBackColor = true;
-            this.startButton.Click += new System.EventHandler(this.startButton_Click);
+            this.startButton.Click += new System.EventHandler(this.StartButton_Click);
             // 
             // label1
             // 

@@ -16,14 +16,14 @@ namespace DepthGuess
             logWriter = writer;
         }
 
-        public int[][] getInclusionLink(LabelStructure label)
+        public int[][] GetInclusionLink(LabelStructure label)
         {
-            logWriter.write("ラベルの内包関係を調べます");
+            logWriter.Write("ラベルの内包関係を調べます");
 
             if (label == null)
             {
-                logWriter.writeError("ラベル情報がありません");
-                logWriter.writeError("処理を中止します");
+                logWriter.WriteError("ラベル情報がありません");
+                logWriter.WriteError("処理を中止します");
                 return null;
             }
 
@@ -31,14 +31,14 @@ namespace DepthGuess
 
             for (int n = label.Min; n < label.Max; n++)
             {
-                link[n - label.Min] = getInclusionNumber(label, n);
+                link[n - label.Min] = GetInclusionNumber(label, n);
             }
 
-            logWriter.write("ラベルの内包関係を調べました");
+            logWriter.Write("ラベルの内包関係を調べました");
             return link;
         }
 
-        private int[] getInclusionNumber(LabelStructure label, int n)
+        private int[] GetInclusionNumber(LabelStructure label, int n)
         {
 
             List<int> list = new List<int>();
@@ -99,13 +99,13 @@ namespace DepthGuess
             return list.ToArray();
         }
 
-        public bool isRing(LabelStructure label, int n)
+        public bool IsRing(LabelStructure label, int n)
         {
-            logWriter.write("内包するものがあるか調べます");
+            logWriter.Write("内包するものがあるか調べます");
 
-            int[] r = getInclusionNumber(label, n);
+            int[] r = GetInclusionNumber(label, n);
 
-            logWriter.write("内包するものがあるか調べました");
+            logWriter.Write("内包するものがあるか調べました");
             return r.Length > 0;
         }
 

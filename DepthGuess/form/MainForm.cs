@@ -19,14 +19,14 @@ namespace DepthGuess
             InitializeComponent();
 
 #if BLACK_STYLE
-            styleSetup();
+            StyleSetup();
 #endif
 
             logWriter = new LogWriter(this, logTextBox);
 
         }
 
-        private void styleSetup()
+        private void StyleSetup()
         {
             BackColor = Color.FromArgb(30, 30, 30);
             ForeColor = SystemColors.Window;
@@ -70,7 +70,7 @@ namespace DepthGuess
 
         }
 
-        private void fileSelectButton_Click(object sender, EventArgs e)
+        private void FileSelectButton_Click(object sender, EventArgs e)
         {
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -78,13 +78,13 @@ namespace DepthGuess
             }
         }
 
-        private void startButton_Click(object sender, EventArgs e)
+        private void StartButton_Click(object sender, EventArgs e)
         {
-            logWriter.clear();
+            logWriter.Clear();
 
             Action process = () =>
             {
-                logWriter.write("処理を開始します");
+                logWriter.Write("処理を開始します");
 
                 LoadImage loadImage = new LoadImage(logWriter);
                 SaveImage saveImage = new SaveImage(logWriter);
@@ -95,21 +95,21 @@ namespace DepthGuess
                 EdgeExtraction edge = new EdgeExtraction(logWriter);
                 Labeling labeling = new Labeling(logWriter);
 
-                Bitmap originalImage = loadImage.load(fileTextBox.Text);
+                Bitmap originalImage = loadImage.Load(fileTextBox.Text);
                 new ImageWindow("元画像", originalImage, logWriter);
 
                 Color[] pallet;
-                Bitmap mediancutImage = medianCut.getImage(originalImage, out pallet);
+                Bitmap mediancutImage = medianCut.GetImage(originalImage, out pallet);
                 new ImageWindow("減色画像", mediancutImage, logWriter);
 
-                Bitmap thresholdImage = threshold.getImage(mediancutImage, 128);
+                Bitmap thresholdImage = threshold.GetImage(mediancutImage, 128);
                 new ImageWindow("二値化画像", thresholdImage, logWriter);
 
-                LabelStructure label = labeling.getLabelTable(thresholdImage);
-                Bitmap labelImage = labeling.getLabelImage(label);
+                LabelStructure label = labeling.GetLabelTable(thresholdImage);
+                Bitmap labelImage = labeling.GetLabelImage(label);
                 new ImageWindow("ラベリング画像", labelImage, logWriter);
 
-                saveImage.saveBinary(originalImage, label.data(), "./depthImage.rgbad");
+                saveImage.SaveBinary(originalImage, label.Label, "./depthImage.rgbad");
 
                 /*
                 Bitmap edgeImage1 = edge.getImage(mediancutImage);
@@ -134,7 +134,7 @@ namespace DepthGuess
 
 
 
-                logWriter.write("処理が完了しました");
+                logWriter.Write("処理が完了しました");
             };
 
             #region プロセス実行
@@ -153,9 +153,16 @@ namespace DepthGuess
 #else
             try
             {
-                Thread thread = new Thread(new ThreadStart(process));
-                thread.IsBackground = true;
-                thread.Start();
+                if (processThread != null && processThread.IsAlive)
+                {
+                    MessageBox.Show("処理が終了していません", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                else
+                {
+                    processThread = new Thread(new ThreadStart(process));
+                    processThread.IsBackground = true;
+                    processThread.Start();
+                }
             }
             catch (Exception ex)
             {
@@ -177,15 +184,31 @@ namespace DepthGuess
             logTextBox.Focus();
         }
 
+        bool closeFlag = false;
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (processThread != null && processThread.IsAlive)
             {
-                MessageBox.Show("処理が終了していません", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                e.Cancel = true;
-                return;
+                var com = MessageBox.Show("処理が終了していません\n本当に終了しますか?", "警告", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+                if (com == DialogResult.Cancel)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+                processThread.Abort();
+                closeFlag = true;
             }
-            
+            else if (!closeFlag)
+            {
+                var com = MessageBox.Show("終了しますか?", "確認", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+                if (com == DialogResult.Cancel)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+                closeFlag = true;
+            }
+
             if (WindowState == FormWindowState.Normal)
                 Properties.Settings.Default.Bounds = Bounds;
             else

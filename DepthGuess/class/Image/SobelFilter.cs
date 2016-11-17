@@ -20,15 +20,15 @@ namespace DepthGuess
         /// <summary>フィルターを適用する</summary>
         /// <param name="image">適用する画像</param>
         /// <returns>適用された<see cref="Bitmap"/></returns>
-        public Bitmap getImage(Bitmap image)
+        public Bitmap GetImage(Bitmap image)
         {
 
-            logWriter.write("sobelフィルタを行います");
+            logWriter.Write("sobelフィルタを行います");
 
             if (image == null)
             {
-                logWriter.writeError("画像が存在しません");
-                logWriter.writeError("sobelフィルタを中止します");
+                logWriter.WriteError("画像が存在しません");
+                logWriter.WriteError("sobelフィルタを中止します");
                 return null;
             }
 
@@ -58,9 +58,9 @@ namespace DepthGuess
                 { 2.0 / 16, 4.0 / 16, 2.0 / 16 },
                 { 1.0 / 16, 2.0 / 16, 1.0 / 16 } };
 
-            byte[,] bmp0 = applyFilter(bmp[0], gaussianFilter);
-            byte[,] bmp1 = applyFilter(bmp[1], gaussianFilter);
-            byte[,] bmp2 = applyFilter(bmp[2], gaussianFilter);
+            byte[,] bmp0 = ApplyFilter(bmp[0], gaussianFilter);
+            byte[,] bmp1 = ApplyFilter(bmp[1], gaussianFilter);
+            byte[,] bmp2 = ApplyFilter(bmp[2], gaussianFilter);
 
             byte[,][,] filterBmp = new byte[3, 4][,];
 
@@ -85,20 +85,20 @@ namespace DepthGuess
                 { 0, 0, 0 },
                 { -1, -2, -1 } };
 
-            filterBmp[0, 0] = applyFilter(bmp0, xFilter[0]);
-            filterBmp[0, 1] = applyFilter(bmp0, yFilter[0]);
-            filterBmp[0, 2] = applyFilter(bmp0, xFilter[1]);
-            filterBmp[0, 3] = applyFilter(bmp0, yFilter[1]);
+            filterBmp[0, 0] = ApplyFilter(bmp0, xFilter[0]);
+            filterBmp[0, 1] = ApplyFilter(bmp0, yFilter[0]);
+            filterBmp[0, 2] = ApplyFilter(bmp0, xFilter[1]);
+            filterBmp[0, 3] = ApplyFilter(bmp0, yFilter[1]);
 
-            filterBmp[1, 0] = applyFilter(bmp1, xFilter[0]);
-            filterBmp[1, 1] = applyFilter(bmp1, yFilter[0]);
-            filterBmp[1, 2] = applyFilter(bmp1, xFilter[1]);
-            filterBmp[1, 3] = applyFilter(bmp1, yFilter[1]);
+            filterBmp[1, 0] = ApplyFilter(bmp1, xFilter[0]);
+            filterBmp[1, 1] = ApplyFilter(bmp1, yFilter[0]);
+            filterBmp[1, 2] = ApplyFilter(bmp1, xFilter[1]);
+            filterBmp[1, 3] = ApplyFilter(bmp1, yFilter[1]);
 
-            filterBmp[2, 0] = applyFilter(bmp2, xFilter[0]);
-            filterBmp[2, 1] = applyFilter(bmp2, yFilter[0]);
-            filterBmp[2, 2] = applyFilter(bmp2, xFilter[1]);
-            filterBmp[2, 3] = applyFilter(bmp2, yFilter[1]);
+            filterBmp[2, 0] = ApplyFilter(bmp2, xFilter[0]);
+            filterBmp[2, 1] = ApplyFilter(bmp2, yFilter[0]);
+            filterBmp[2, 2] = ApplyFilter(bmp2, xFilter[1]);
+            filterBmp[2, 3] = ApplyFilter(bmp2, yFilter[1]);
 
             for (int y = 0; y < image.Height; y++)
             {
@@ -127,12 +127,12 @@ namespace DepthGuess
             Marshal.Copy(buf, 0, data.Scan0, buf.Length);
             bitmap.UnlockBits(data);
 
-            logWriter.write("sobelフィルタが完了しました");
+            logWriter.Write("sobelフィルタが完了しました");
 
             return bitmap;
         }
 
-        private byte[,] applyFilter(byte[,] table, double[,] filter)
+        private byte[,] ApplyFilter(byte[,] table, double[,] filter)
         {
             int[,] next = new int[table.GetLength(0), table.GetLength(1)];
 

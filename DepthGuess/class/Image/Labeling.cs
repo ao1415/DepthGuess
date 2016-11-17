@@ -24,14 +24,14 @@ namespace DepthGuess
         /// <summary>画像からラベルを作成する</summary>
         /// <param name="bmp">ラベルを作成したい画像</param>
         /// <returns>ラベル情報<see cref="int[,]"/></returns>
-        public LabelStructure getLabelTable(Bitmap bmp)
+        public LabelStructure GetLabelTable(Bitmap bmp)
         {
-            logWriter.write("ラベリング処理を行います");
+            logWriter.Write("ラベリング処理を行います");
 
             if (bmp == null)
             {
-                logWriter.writeError("画像が存在しません");
-                logWriter.writeError("ラベリング処理を中止します");
+                logWriter.WriteError("画像が存在しません");
+                logWriter.WriteError("ラベリング処理を中止します");
                 return null;
             }
 
@@ -90,41 +90,41 @@ namespace DepthGuess
                 }
             }
 
-            logWriter.write("ラベリング処理が完了しました");
+            logWriter.Write("ラベリング処理が完了しました");
             return new LabelStructure(labelTable);
         }
 
         /// <summary>画像からラベル情報を視覚化した画像を作成する</summary>
         /// <param name="bmp">視覚化したい画像</param>
         /// <returns>視覚化された画像<see cref="Bitmap"></returns>
-        public Bitmap getLabelImage(Bitmap bmp)
+        public Bitmap GetLabelImage(Bitmap bmp)
         {
-            var label = getLabelTable(bmp);
+            var label = GetLabelTable(bmp);
 
-            logWriter.write("ラベルデータの画像作成を行います");
+            logWriter.Write("ラベルデータの画像作成を行います");
 
             if (label == null)
             {
-                logWriter.writeError("ラベルデータが存在しません");
-                logWriter.writeError("画像作成を中止します");
+                logWriter.WriteError("ラベルデータが存在しません");
+                logWriter.WriteError("画像作成を中止します");
                 return null;
             }
 
-            Bitmap bitmap = getLabelImage(label);
+            Bitmap bitmap = GetLabelImage(label);
 
             return bitmap;
         }
         /// <summary>ラベル情報を視覚化する</summary>
         /// <param name="label">視覚化したいラベルデータ</param>
         /// <returns>視覚化された画像<see cref="Bitmap"></returns>
-        public Bitmap getLabelImage(LabelStructure label)
+        public Bitmap GetLabelImage(LabelStructure label)
         {
-            logWriter.write("ラベルデータの画像作成を行います");
+            logWriter.Write("ラベルデータの画像作成を行います");
 
             if (label == null)
             {
-                logWriter.writeError("ラベルデータが存在しません");
-                logWriter.writeError("画像作成を中止します");
+                logWriter.WriteError("ラベルデータが存在しません");
+                logWriter.WriteError("画像作成を中止します");
                 return null;
             }
 
@@ -140,8 +140,8 @@ namespace DepthGuess
             val += 1;
             int c = Math.Max(byte.MaxValue / val, 16);
 
-            logWriter.write("分割数　　=" + val);
-            logWriter.write("色の変化量=" + c);
+            logWriter.Write("分割数　　=" + val);
+            logWriter.Write("色の変化量=" + c);
 
             {
                 BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
@@ -163,7 +163,7 @@ namespace DepthGuess
                 bitmap.UnlockBits(data);
             }
 
-            logWriter.write("ラベルデータの画像作成が完了しました");
+            logWriter.Write("ラベルデータの画像作成が完了しました");
 
             return bitmap;
         }

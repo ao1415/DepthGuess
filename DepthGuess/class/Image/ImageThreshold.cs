@@ -25,14 +25,14 @@ namespace DepthGuess
         /// <param name="bmp">処理を行いたい画像</param>
         /// <param name="threshold">閾値</param>
         /// <returns>二値化された<see cref="Bitmap"/></returns>
-        public Bitmap getImage(Bitmap bmp, byte threshold)
+        public Bitmap GetImage(Bitmap bmp, byte threshold)
         {
-            logWriter.write("二値化処理を行います");
+            logWriter.Write("二値化処理を行います");
 
             if (bmp == null)
             {
-                logWriter.writeError("画像が存在しません");
-                logWriter.writeError("二値化処理を中止します");
+                logWriter.WriteError("画像が存在しません");
+                logWriter.WriteError("二値化処理を中止します");
                 return null;
             }
 
@@ -59,7 +59,7 @@ namespace DepthGuess
             Marshal.Copy(buf, 0, data.Scan0, buf.Length);
             bitmap.UnlockBits(data);
 
-            logWriter.write("二値化処理が完了しました");
+            logWriter.Write("二値化処理が完了しました");
             return bitmap;
         }
 

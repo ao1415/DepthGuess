@@ -22,23 +22,25 @@ namespace DepthGuess
 
         /// <summary>通常のログを書き出す</summary>
         /// <param name="text">メッセージ</param>
-        public void write(string text)
+        public void Write(string text)
         {
-            //write(text, Color.Green);
-            form.BeginInvoke(new writeTextBoxDelegate(write), new object[] { text, Color.Green });
-            Console.Out.WriteLine(text);
+            string date = GetNow();
+
+            form.BeginInvoke(new writeTextBoxDelegate(Write), new object[] { date + text, Color.Green });
+            Console.Out.WriteLine(date + text);
         }
 
         /// <summary>エラーログを書き出す</summary>
         /// <param name="text">メッセージ</param>
-        public void writeError(string text)
+        public void WriteError(string text)
         {
-            //write(text, Color.Red);
-            form.BeginInvoke(new writeTextBoxDelegate(write), new object[] { text, Color.Red });
-            Console.Error.WriteLine(text);
+            string date = GetNow();
+
+            form.BeginInvoke(new writeTextBoxDelegate(Write), new object[] { date + text, Color.Red });
+            Console.Error.WriteLine(date + text);
         }
 
-        private void write(string text, Color color)
+        private void Write(string text, Color color)
         {
             logTextBox.Focus();
             logTextBox.SelectionLength = 0;
@@ -47,15 +49,23 @@ namespace DepthGuess
             logTextBox.Refresh();
         }
 
+        private string GetNow()
+        {
+            string now = DateTime.Now.ToString("[HH:mm:ss.");
+            int ms = DateTime.Now.Millisecond;
+            now += string.Format("{0:000}]", ms);
+            return now;
+        }
+
         private delegate void updateTextBoxDelegate();
         /// <summary>テキストボックスの文字列を全削除する</summary>
-        public void clear()
+        public void Clear()
         {
             form.BeginInvoke(new updateTextBoxDelegate(() => { logTextBox.Clear(); }));
         }
 
         /// <summary>テキストボックスを強制的に再描写する</summary>
-        public void refresh()
+        public void Refresh()
         {
             form.BeginInvoke(new updateTextBoxDelegate(() => { logTextBox.Refresh(); }));
         }

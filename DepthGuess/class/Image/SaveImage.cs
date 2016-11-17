@@ -23,9 +23,9 @@ namespace DepthGuess
         /// <summary>画像を保存する</summary>
         /// <param name="image">保存したい画像</param>
         /// <param name="path">保存する場所</param>
-        public void save(Image image, string path)
+        public void Save(Image image, string path)
         {
-            logWriter.write("画像を保存します");
+            logWriter.Write("画像を保存します");
 
             try
             {
@@ -33,21 +33,21 @@ namespace DepthGuess
             }
             catch (Exception)
             {
-                logWriter.writeError("画像の保存に失敗しました");
+                logWriter.WriteError("画像の保存に失敗しました");
                 return;
             }
 
-            logWriter.write("画像を保存しました");
-            logWriter.write("path=" + path);
+            logWriter.Write("画像を保存しました");
+            logWriter.Write("path=" + path);
         }
 
         /// <summary>深さ情報を持った画像を保存する</summary>
         /// <param name="image">保存したい画像</param>
         /// <param name="depth">画像の深さデータ</param>
         /// <param name="path">保存したい場所</param>
-        public void save(Bitmap image, int[,] depth, string path)
+        public void Save(Bitmap image, int[,] depth, string path)
         {
-            logWriter.write("三次元画像を保存します");
+            logWriter.Write("三次元画像を保存します");
 
             try
             {
@@ -66,20 +66,20 @@ namespace DepthGuess
             }
             catch (Exception)
             {
-                logWriter.writeError("三次元画像の保存に失敗しました");
+                logWriter.WriteError("三次元画像の保存に失敗しました");
                 return;
             }
 
-            logWriter.write("三次元画像を保存しました");
-            logWriter.write("path=" + path);
+            logWriter.Write("三次元画像を保存しました");
+            logWriter.Write("path=" + path);
         }
         /// <summary>深さ情報を持った画像のバイナリデータを保存する</summary>
         /// <param name="image">保存したい画像</param>
         /// <param name="depth">画像の深さデータ</param>
         /// <param name="path">保存したい場所</param>
-        public void saveBinary(Bitmap image, int[,] depth, string path)
+        public void SaveBinary(Bitmap image, int[,] depth, string path)
         {
-            logWriter.write("三次元画像を保存します");
+            logWriter.Write("三次元画像を保存します");
 
             try
             {
@@ -103,12 +103,12 @@ namespace DepthGuess
             }
             catch (Exception)
             {
-                logWriter.writeError("三次元画像の保存に失敗しました");
+                logWriter.WriteError("三次元画像の保存に失敗しました");
                 return;
             }
 
-            logWriter.write("三次元画像を保存しました");
-            logWriter.write("path=" + path);
+            logWriter.Write("三次元画像を保存しました");
+            logWriter.Write("path=" + path);
         }
 
     }
