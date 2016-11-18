@@ -27,9 +27,9 @@ namespace DepthGuess
                 return null;
             }
 
-            int[][] link = new int[label.Max - label.Min][];
+            int[][] link = new int[label.Max - label.Min + 1][];
 
-            for (int n = label.Min; n < label.Max; n++)
+            for (int n = label.Min; n <= label.Max; n++)
             {
                 link[n - label.Min] = GetInclusionNumber(label, n);
             }
@@ -41,14 +41,13 @@ namespace DepthGuess
         private int[] GetInclusionNumber(LabelStructure label, int n)
         {
 
-            List<int> list = new List<int>();
-            HashSet<int> check = new HashSet<int>();
-
-            Func<int, int, bool> inside = (int x, int y) =>
+            Func<int, int, HashSet<int>> inside = (int x, int y) =>
             {
                 bool[,] checkTable = new bool[label.Height, label.Width];
 
                 Stack<Point> sta = new Stack<Point>();
+
+                HashSet<int> labelTable = new HashSet<int>();
 
                 checkTable[y, x] = true;
                 sta.Push(new Point(x, y));
@@ -65,22 +64,27 @@ namespace DepthGuess
                         {
                             if (!checkTable[pos.Y, pos.X])
                             {
-                                if (label[y, x] != n)
+                                if (label[pos.Y, pos.X] != n)
                                 {
                                     checkTable[pos.Y, pos.X] = true;
                                     sta.Push(pos);
+                                    labelTable.Add(label[pos.Y, pos.X]);
                                 }
                             }
                         }
                         else
                         {
-                            return false;
+                            return new HashSet<int>();
                         }
                     }
                 }
 
-                return true;
+                return labelTable;
             };
+
+            HashSet<int> list = new HashSet<int>();
+            HashSet<int> check = new HashSet<int>();
+            check.Add(n);
 
             for (int y = 0; y < label.Height; y++)
             {
@@ -88,15 +92,17 @@ namespace DepthGuess
                 {
                     if (check.Add(label[y, x]))
                     {
-                        if (inside(x, y))
+                        var table = inside(x, y);
+                        foreach (int v in table)
                         {
-                            list.Add(label[y, x]);
+                            list.Add(v);
+                            check.Add(v);
                         }
                     }
                 }
             }
-
-            return list.ToArray();
+            
+            return list.Distinct().ToArray();
         }
 
         public bool IsRing(LabelStructure label, int n)

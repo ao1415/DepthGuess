@@ -37,7 +37,8 @@ namespace DepthGuess
 
             int[,] labelTable = new int[bmp.Height, bmp.Width];
             Color[,] colorTable = new Color[bmp.Height, bmp.Width];
-            
+
+            #region 画素配列作成部分
             {
                 BitmapData data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
                 byte[] buf = new byte[bmp.Width * bmp.Height * 4];
@@ -54,6 +55,7 @@ namespace DepthGuess
                 }
                 bmp.UnlockBits(data);
             }
+            #endregion
 
             int label = 0;
             for (int y = 0; y < bmp.Height; y++)
@@ -90,8 +92,29 @@ namespace DepthGuess
                 }
             }
 
+
             logWriter.Write("ラベリング処理が完了しました");
             return new LabelStructure(labelTable);
+        }
+        private LabelStructure GetLabelTable(Color[] bmp)
+        {
+
+            for (int y = 0; y < bmp.Height; y++)
+            {
+                for (int x = 0; x < bmp.Width; x++)
+                {
+
+                }
+            }
+
+            for (int y = 0; y < bmp.Height; y++)
+            {
+                for (int x = 0; x < bmp.Width; x++)
+                {
+
+                }
+            }
+
         }
 
         /// <summary>画像からラベル情報を視覚化した画像を作成する</summary>

@@ -21,14 +21,17 @@ namespace DepthGuess
             max = int.MinValue;
             min = int.MaxValue;
 
-            foreach (var val in label)
-            {
-                max = Math.Max(max, val);
-                min = Math.Min(min, val);
-            }
-
             height = label.GetLength(0);
             width = label.GetLength(1);
+
+            for (int y = 0; y < Height; y++)
+            {
+                for (int x = 0; x < Width; x++)
+                {
+                    max = Math.Max(max, label[y, x]);
+                    min = Math.Min(min, label[y, x]);
+                }
+            }
 
         }
 

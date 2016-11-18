@@ -32,8 +32,9 @@
             this.fileSelectButton = new System.Windows.Forms.Button();
             this.startButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.openImageDialog = new System.Windows.Forms.OpenFileDialog();
             this.logTextBox = new System.Windows.Forms.RichTextBox();
+            this.stopButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // fileTextBox
@@ -72,9 +73,9 @@
             this.label1.TabIndex = 4;
             this.label1.Text = "実行状況";
             // 
-            // openFileDialog
+            // openImageDialog
             // 
-            this.openFileDialog.Filter = "画像ファイル|*.bmp;*.png;*.jpg";
+            this.openImageDialog.Filter = "画像ファイル|*.bmp;*.png;*.jpg";
             // 
             // logTextBox
             // 
@@ -88,11 +89,23 @@
             this.logTextBox.Text = "";
             this.logTextBox.WordWrap = false;
             // 
+            // stopButton
+            // 
+            this.stopButton.Enabled = false;
+            this.stopButton.Location = new System.Drawing.Point(347, 37);
+            this.stopButton.Name = "stopButton";
+            this.stopButton.Size = new System.Drawing.Size(101, 23);
+            this.stopButton.TabIndex = 7;
+            this.stopButton.Text = "中止";
+            this.stopButton.UseVisualStyleBackColor = true;
+            this.stopButton.Click += new System.EventHandler(this.StopButton_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(460, 277);
+            this.Controls.Add(this.stopButton);
             this.Controls.Add(this.logTextBox);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.startButton);
@@ -117,8 +130,9 @@
         private System.Windows.Forms.Button fileSelectButton;
         private System.Windows.Forms.Button startButton;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.OpenFileDialog openFileDialog;
+        private System.Windows.Forms.OpenFileDialog openImageDialog;
         private System.Windows.Forms.RichTextBox logTextBox;
+        private System.Windows.Forms.Button stopButton;
     }
 }
 

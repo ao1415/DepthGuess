@@ -72,14 +72,18 @@ namespace DepthGuess
 
         private void FileSelectButton_Click(object sender, EventArgs e)
         {
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            if (openImageDialog.ShowDialog() == DialogResult.OK)
             {
-                fileTextBox.Text = openFileDialog.FileName;
+                fileTextBox.Text = openImageDialog.FileName;
+                SaveSettings();
             }
         }
-
+        
         private void StartButton_Click(object sender, EventArgs e)
         {
+            stopButton.Enabled = true;
+            startButton.Enabled = false;
+
             logWriter.Clear();
 
             Action process = () =>
@@ -95,6 +99,8 @@ namespace DepthGuess
                 EdgeExtraction edge = new EdgeExtraction(logWriter);
                 Labeling labeling = new Labeling(logWriter);
 
+                Guess01 guess1 = new Guess01(logWriter);
+
                 Bitmap originalImage = loadImage.Load(fileTextBox.Text);
                 new ImageWindow("元画像", originalImage, logWriter);
 
@@ -109,32 +115,35 @@ namespace DepthGuess
                 Bitmap labelImage = labeling.GetLabelImage(label);
                 new ImageWindow("ラベリング画像", labelImage, logWriter);
 
-                saveImage.SaveBinary(originalImage, label.Label, "./depthImage.rgbad");
+                int[,] depth = guess1.GetDepth(label);
 
-                /*
-                Bitmap edgeImage1 = edge.getImage(mediancutImage);
-                new ImageWindow("エッジ画像", edgeImage1, logWriter);
-                Bitmap edgeImage2 = edge.getImage(originalImage);
-                new ImageWindow("エッジ画像(減色なし)", edgeImage2, logWriter);
-
-
-
-                Bitmap sobelImage1 = sobelFilter.getImage(mediancutImage);
-                new ImageWindow("sobel画像", sobelImage1, logWriter);
-                Bitmap sobelImage2 = sobelFilter.getImage(originalImage);
-                new ImageWindow("sobel画像(減色なし)", sobelImage2, logWriter);
-
-
-
-                Bitmap thresholdImage1 = threshold.getImage(sobelImage1, 127);
-                new ImageWindow("二値化エッジ画像", thresholdImage1, logWriter);
-                Bitmap thresholdImage2 = threshold.getImage(sobelImage2, 127);
-                new ImageWindow("二値化エッジ画像(減色なし)", thresholdImage2, logWriter);
-                */
-
-
+                new ImageWindow("深さ情報", labeling.GetLabelImage(new LabelStructure(depth)), logWriter);
 
                 logWriter.Write("処理が完了しました");
+
+                BeginInvoke(new Action<Image, int[,]>((Image img, int[,] dth) =>
+                {
+                    DialogResult com = MessageBox.Show("3次元画像を保存しますか?", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    if (com == DialogResult.Yes)
+                    {
+                        SaveFileDialog saveDialog = new SaveFileDialog();
+                        saveDialog.Filter = "3次元画像|*.rgbad;*.txt";
+                        saveDialog.Title = "保存";
+                        saveDialog.DefaultExt = "rgbad";
+                        if (saveDialog.ShowDialog() == DialogResult.OK)
+                        {
+                            string path = Path.GetDirectoryName(saveDialog.FileName) + "\\" + Path.GetFileNameWithoutExtension(saveDialog.FileName);
+                            saveImage.Save(originalImage, depth, path + ".txt");
+                            saveImage.SaveBinary(originalImage, depth, path + ".rgbad");
+                        }
+                    }
+                }), new object[] { (Image)originalImage.Clone(), (int[,])depth.Clone() });
+
+                BeginInvoke(new Action(() =>
+                {
+                    stopButton.Enabled = false;
+                    startButton.Enabled = true;
+                }));
             };
 
             #region プロセス実行
@@ -166,12 +175,23 @@ namespace DepthGuess
             }
             catch (Exception ex)
             {
-                logWriter.writeError("エラーが発生しました");
-                logWriter.writeError(ex.ToString());
-                logWriter.writeError("処理を停止します");
+                logWriter.WriteError("エラーが発生しました");
+                logWriter.WriteError(ex.ToString());
+                logWriter.WriteError("処理を停止します");
             }
 #endif
             #endregion
+
+        }
+        private void StopButton_Click(object sender, EventArgs e)
+        {
+            if (processThread != null && processThread.IsAlive)
+                processThread.Abort();
+
+            logWriter.WriteError("処理を中止しました");
+
+            stopButton.Enabled = false;
+            startButton.Enabled = true;
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -209,6 +229,14 @@ namespace DepthGuess
                 closeFlag = true;
             }
 
+            SaveSettings();
+
+            Application.Exit();
+        }
+
+        private void SaveSettings()
+        {
+
             if (WindowState == FormWindowState.Normal)
                 Properties.Settings.Default.Bounds = Bounds;
             else
@@ -220,8 +248,8 @@ namespace DepthGuess
 
             Properties.Settings.Default.Save();
 
-            Application.Exit();
         }
+
     }
 
     static class Config

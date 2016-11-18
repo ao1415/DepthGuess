@@ -174,7 +174,7 @@ namespace DepthGuess
             logWriter.Write("減色処理が完了しました");
             logWriter.Write("パレット数=" + selectColors.Length);
             for (int i = 0; i < selectColors.Length; i++)
-                logWriter.Write(string.Format("{0,2}番目のパレット=Color [A={1,3}, R={2,3}, G={3,3}, B={4,3}]", (i + 1), selectColors[i].A, selectColors[i].R, selectColors[i].G, selectColors[i].B));
+                logWriter.Write(string.Format("{0:00}番目のパレット=Color [A={1,3}, R={2,3}, G={3,3}, B={4,3}]", (i + 1), selectColors[i].A, selectColors[i].R, selectColors[i].G, selectColors[i].B));
 
             return bitmap;
         }
