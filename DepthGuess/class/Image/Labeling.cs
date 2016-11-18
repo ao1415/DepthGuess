@@ -35,86 +35,82 @@ namespace DepthGuess
                 return null;
             }
 
+            Func<int, int, int> ToIndex = (x, y) =>
+              {
+                  return y * bmp.Height * 4 + x * 4;
+              };
+
             int[,] labelTable = new int[bmp.Height, bmp.Width];
-            Color[,] colorTable = new Color[bmp.Height, bmp.Width];
 
-            #region 画素配列作成部分
-            {
-                BitmapData data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-                byte[] buf = new byte[bmp.Width * bmp.Height * 4];
-                Marshal.Copy(data.Scan0, buf, 0, buf.Length);
+            BitmapData data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            byte[] buf = new byte[bmp.Width * bmp.Height * 4];
+            Marshal.Copy(data.Scan0, buf, 0, buf.Length);
 
-                for (int y = 0; y < bmp.Height; y++)
-                {
-                    for (int x = 0; x < bmp.Width; x++)
-                    {
-                        int index = y * bmp.Width * 4 + x * 4;
-                        colorTable[y, x] = Color.FromArgb(buf[index + 0], buf[index + 1], buf[index + 2]);
-                        labelTable[y, x] = -1;
-                    }
-                }
-                bmp.UnlockBits(data);
-            }
-            #endregion
-
+            Dictionary<int, int> lookupTable = new Dictionary<int, int>();
             int label = 0;
             for (int y = 0; y < bmp.Height; y++)
             {
                 for (int x = 0; x < bmp.Width; x++)
                 {
-                    #region 同色探査部分
-                    if (labelTable[y, x] == -1)
+                    int index = ToIndex(x, y);
+                    int r = buf[index + 0];
+                    int g = buf[index + 1];
+                    int b = buf[index + 2];
+
+                    int minLabel = int.MaxValue;
+
+                    var dire = new Point[] { new Point(-1, -1), new Point(0, -1), new Point(1, -1), new Point(-1, 0) };
+                    foreach (var d in dire)
                     {
-                        Stack<Point> sta = new Stack<Point>();
+                        Point pos = new Point(x + d.X, y + d.Y);
 
-                        labelTable[y, x] = label;
-                        sta.Push(new Point(x, y));
-
-                        while (sta.Count > 0)
+                        if (0 <= pos.X && pos.X < bmp.Width && 0 <= pos.Y)
                         {
-                            Point p = sta.Pop();
-                            foreach (var dire in Config.Direction)
+                            int index2 = ToIndex(pos.X, pos.Y);
+                            if (r == buf[index2 + 0] && g == buf[index2 + 1] && b == buf[index2 + 2])
                             {
-                                Point point = new Point(p.X + dire.X, p.Y + dire.Y);
-                                if (0 <= point.X && point.X < bmp.Width && 0 <= point.Y && point.Y < bmp.Height)
+                                if (minLabel > labelTable[pos.Y, pos.X])
                                 {
-                                    if (labelTable[point.Y, point.X] == -1 && colorTable[y, x] == colorTable[point.Y, point.X])
-                                    {
-                                        labelTable[point.Y, point.X] = label;
-                                        sta.Push(point);
-                                    }
+                                    lookupTable[minLabel] = labelTable[pos.Y, pos.X];
+                                    minLabel = labelTable[pos.Y, pos.X];
                                 }
+                                lookupTable[labelTable[pos.Y, pos.X]] = minLabel;
                             }
                         }
+
+                    }
+
+                    if (minLabel != int.MaxValue)
+                    {
+                        labelTable[y, x] = minLabel;
+                        lookupTable[minLabel] = minLabel;
+                    }
+                    else
+                    {
+                        labelTable[y, x] = label + 1;
+                        lookupTable[labelTable[y, x]] = labelTable[y, x];
                         label++;
                     }
-                    #endregion
                 }
             }
+            bmp.UnlockBits(data);
 
+            var keys = lookupTable.Keys.ToArray();
+            foreach (var key in keys)
+            {
+                lookupTable[key] = lookupTable[lookupTable[key]];
+            }
+
+            for (int y = 0; y < bmp.Height; y++)
+            {
+                for (int x = 0; x < bmp.Width; x++)
+                {
+                    labelTable[y, x] = lookupTable[labelTable[y, x]];
+                }
+            }
 
             logWriter.Write("ラベリング処理が完了しました");
             return new LabelStructure(labelTable);
-        }
-        private LabelStructure GetLabelTable(Color[] bmp)
-        {
-
-            for (int y = 0; y < bmp.Height; y++)
-            {
-                for (int x = 0; x < bmp.Width; x++)
-                {
-
-                }
-            }
-
-            for (int y = 0; y < bmp.Height; y++)
-            {
-                for (int x = 0; x < bmp.Width; x++)
-                {
-
-                }
-            }
-
         }
 
         /// <summary>画像からラベル情報を視覚化した画像を作成する</summary>

@@ -115,12 +115,12 @@ namespace DepthGuess
                 Bitmap labelImage = labeling.GetLabelImage(label);
                 new ImageWindow("ラベリング画像", labelImage, logWriter);
 
-                int[,] depth = guess1.GetDepth(label);
+                //int[,] depth = guess1.GetDepth(label);
 
-                new ImageWindow("深さ情報", labeling.GetLabelImage(new LabelStructure(depth)), logWriter);
+                //new ImageWindow("深さ情報", labeling.GetLabelImage(new LabelStructure(depth)), logWriter);
 
                 logWriter.Write("処理が完了しました");
-
+                /*
                 BeginInvoke(new Action<Image, int[,]>((Image img, int[,] dth) =>
                 {
                     DialogResult com = MessageBox.Show("3次元画像を保存しますか?", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
@@ -138,7 +138,7 @@ namespace DepthGuess
                         }
                     }
                 }), new object[] { (Image)originalImage.Clone(), (int[,])depth.Clone() });
-
+                */
                 BeginInvoke(new Action(() =>
                 {
                     stopButton.Enabled = false;
