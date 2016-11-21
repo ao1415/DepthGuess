@@ -25,6 +25,7 @@ namespace DepthGuess
             {
                 logWriter.WriteError(text + "が存在しません");
                 logWriter.WriteError("ダミーデータを表示します");
+                image = new Bitmap(100, 100);
             }
 
             logWriter.Write(text + "を表示しました");
@@ -33,8 +34,9 @@ namespace DepthGuess
             //form.Show();
             //form.Refresh();
 
+
             PictureForm form = new PictureForm((string)text.Clone(), (Image)image.Clone(), logWriter);
-            
+
             Thread thread = new Thread(new ParameterizedThreadStart((object data) =>
             {
                 Application.EnableVisualStyles();
@@ -45,7 +47,7 @@ namespace DepthGuess
             thread.Start(form);
 
         }
-        
+
         private class PictureForm : Form
         {
 

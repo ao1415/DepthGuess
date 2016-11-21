@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -60,6 +61,8 @@ namespace DepthGuess
                     int minLabel = int.MaxValue;
 
                     var dire = new Point[] { new Point(-1, -1), new Point(0, -1), new Point(1, -1), new Point(-1, 0) };
+                    List<Point> plist = new List<Point>();
+
                     foreach (var d in dire)
                     {
                         Point pos = new Point(x + d.X, y + d.Y);
@@ -69,21 +72,22 @@ namespace DepthGuess
                             int index2 = ToIndex(pos.X, pos.Y);
                             if (r == buf[index2 + 0] && g == buf[index2 + 1] && b == buf[index2 + 2])
                             {
-                                if (minLabel > labelTable[pos.Y, pos.X])
-                                {
-                                    lookupTable[minLabel] = labelTable[pos.Y, pos.X];
-                                    minLabel = labelTable[pos.Y, pos.X];
-                                }
-                                lookupTable[labelTable[pos.Y, pos.X]] = minLabel;
+                                plist.Add(pos);
+                                minLabel = Math.Min(minLabel, labelTable[pos.Y, pos.X]);
                             }
                         }
 
                     }
 
+                    foreach (var p in plist)
+                    {
+                        lookupTable[labelTable[p.Y, p.X]] = Math.Min(minLabel, lookupTable[labelTable[p.Y, p.X]]);
+                    }
+
                     if (minLabel != int.MaxValue)
                     {
                         labelTable[y, x] = minLabel;
-                        lookupTable[minLabel] = minLabel;
+                        lookupTable[minLabel] = Math.Min(minLabel, lookupTable[minLabel]);
                     }
                     else
                     {
@@ -99,6 +103,30 @@ namespace DepthGuess
             foreach (var key in keys)
             {
                 lookupTable[key] = lookupTable[lookupTable[key]];
+            }
+
+            List<KeyValuePair<int, int>> keyValueList = new List<KeyValuePair<int, int>>(lookupTable);
+            keyValueList.Sort((KeyValuePair<int, int> k1, KeyValuePair<int, int> k2) =>
+            {
+                return k1.Value - k2.Value;
+            });
+            {
+                int labelNum = -1;
+                int now = 0;
+                for (int i = 0; i < keyValueList.Count; i++)
+                {
+                    int key = keyValueList[i].Key;
+                    if (now == keyValueList[i].Value)
+                    {
+                        lookupTable[key] = labelNum;
+                    }
+                    else
+                    {
+                        labelNum++;
+                        now = keyValueList[i].Value;
+                        lookupTable[key] = labelNum;
+                    }
+                }
             }
 
             for (int y = 0; y < bmp.Height; y++)

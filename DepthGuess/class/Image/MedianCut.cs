@@ -146,7 +146,9 @@ namespace DepthGuess
             {
                 for (int x = 0; x < image.Width; x++)
                 {
-                    Color color = image.GetPixel(x, y);
+                    //Color color = image.GetPixel(x, y);
+                    int index = y * bitmap.Width * 4 + x * 4;
+                    Color color = Color.FromArgb(buf[index + 0], buf[index + 1], buf[index + 2]);
 
                     double minRange = double.MaxValue;
                     Color nearColor = Color.Black;
@@ -159,8 +161,7 @@ namespace DepthGuess
                             nearColor = c;
                         }
                     }
-
-                    int index = y * bitmap.Width * 4 + x * 4;
+                    
                     buf[index + 0] = nearColor.R;
                     buf[index + 1] = nearColor.G;
                     buf[index + 2] = nearColor.B;
