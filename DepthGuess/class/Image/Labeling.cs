@@ -36,10 +36,7 @@ namespace DepthGuess
                 return null;
             }
 
-            Func<int, int, int> ToIndex = (x, y) =>
-              {
-                  return y * bmp.Height * 4 + x * 4;
-              };
+            Func<int, int, int> ToIndex = (x, y) => { return y * bmp.Height * 4 + x * 4; };
 
             int[,] labelTable = new int[bmp.Height, bmp.Width];
 
@@ -47,6 +44,7 @@ namespace DepthGuess
             byte[] buf = new byte[bmp.Width * bmp.Height * 4];
             Marshal.Copy(data.Scan0, buf, 0, buf.Length);
 
+            #region ラベル番号の設定
             Dictionary<int, int> lookupTable = new Dictionary<int, int>();
             int label = 0;
             for (int y = 0; y < bmp.Height; y++)
@@ -98,7 +96,9 @@ namespace DepthGuess
                 }
             }
             bmp.UnlockBits(data);
+            #endregion
 
+            #region ラベル番号の最適化
             var keys = lookupTable.Keys.ToArray();
             foreach (var key in keys)
             {
@@ -136,6 +136,7 @@ namespace DepthGuess
                     labelTable[y, x] = lookupTable[labelTable[y, x]];
                 }
             }
+            #endregion
 
             logWriter.Write("ラベリング処理が完了しました");
             return new LabelStructure(labelTable);

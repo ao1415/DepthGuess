@@ -115,30 +115,35 @@ namespace DepthGuess
                 Bitmap labelImage = labeling.GetLabelImage(label);
                 new ImageWindow("ラベリング画像", labelImage, logWriter);
 
-                //int[,] depth = guess1.GetDepth(label);
+                int[,] depth = guess1.GetDepth(label);
 
-                //new ImageWindow("深さ情報", labeling.GetLabelImage(new LabelStructure(depth)), logWriter);
+                new ImageWindow("深さ情報", labeling.GetLabelImage(new LabelStructure(depth)), logWriter);
 
                 logWriter.Write("処理が完了しました");
-                /*
-                BeginInvoke(new Action<Image, int[,]>((Image img, int[,] dth) =>
+
+                Action save=() =>
                 {
-                    DialogResult com = MessageBox.Show("3次元画像を保存しますか?", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                    if (com == DialogResult.Yes)
+                    BeginInvoke(new Action<Image, int[,]>((Image img, int[,] dth) =>
                     {
-                        SaveFileDialog saveDialog = new SaveFileDialog();
-                        saveDialog.Filter = "3次元画像|*.rgbad;*.txt";
-                        saveDialog.Title = "保存";
-                        saveDialog.DefaultExt = "rgbad";
-                        if (saveDialog.ShowDialog() == DialogResult.OK)
+                        DialogResult com = MessageBox.Show("3次元画像を保存しますか?", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                        if (com == DialogResult.Yes)
                         {
-                            string path = Path.GetDirectoryName(saveDialog.FileName) + "\\" + Path.GetFileNameWithoutExtension(saveDialog.FileName);
-                            saveImage.Save(originalImage, depth, path + ".txt");
-                            saveImage.SaveBinary(originalImage, depth, path + ".rgbad");
+                            SaveFileDialog saveDialog = new SaveFileDialog();
+                            saveDialog.Filter = "3次元画像|*.rgbad;*.txt";
+                            saveDialog.Title = "保存";
+                            saveDialog.DefaultExt = "rgbad";
+                            if (saveDialog.ShowDialog() == DialogResult.OK)
+                            {
+                                string path = Path.GetDirectoryName(saveDialog.FileName) + "\\" + Path.GetFileNameWithoutExtension(saveDialog.FileName);
+                                saveImage.Save(originalImage, depth, path + ".txt");
+                                saveImage.SaveBinary(originalImage, depth, path + ".rgbad");
+                            }
                         }
-                    }
-                }), new object[] { (Image)originalImage.Clone(), (int[,])depth.Clone() });
-                */
+                    }), new object[] { (Image)originalImage.Clone(), (int[,])depth.Clone() });
+                };
+
+                //save();
+
                 BeginInvoke(new Action(() =>
                 {
                     stopButton.Enabled = false;
