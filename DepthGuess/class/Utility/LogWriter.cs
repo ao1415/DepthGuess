@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -9,7 +10,7 @@ namespace DepthGuess
     {
         private RichTextBox logTextBox;
         private Form form;
-        
+
         /// <summary>コンストラクタ</summary>
         /// <param name="textBox">テキストボックス</param>
         public LogWriter(Form mainForm, RichTextBox textBox)
@@ -49,6 +50,17 @@ namespace DepthGuess
             logTextBox.Refresh();
         }
 
+        public void RemoveLine()
+        {
+            form.BeginInvoke(new Action(() =>
+            {
+                List<string> lines = new List<string>(logTextBox.Lines);
+                var line = lines.Count - 2;
+                lines.RemoveAt(line);
+                logTextBox.Text = string.Join("\n", lines);
+            }));
+        }
+
         private string GetNow()
         {
             string now = DateTime.Now.ToString("[HH:mm:ss.");
@@ -56,7 +68,7 @@ namespace DepthGuess
             now += string.Format("{0:000}]", ms);
             return now;
         }
-        
+
         /// <summary>テキストボックスの文字列を全削除する</summary>
         public void Clear()
         {

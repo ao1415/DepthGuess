@@ -13,13 +13,14 @@ namespace DepthGuess
     class MedianCut
     {
 
-        private static readonly uint ColorNumber = 2;
+        private uint ColorNumber = 2;
         private LogWriter logWriter;
 
         /// <summary>コンストラクタ</summary>
         /// <param name="writer"><see cref="LogWriter"/></param>
-        public MedianCut(LogWriter writer)
+        public MedianCut(uint colorNumber, LogWriter writer)
         {
+            ColorNumber = colorNumber;
             logWriter = writer;
         }
 

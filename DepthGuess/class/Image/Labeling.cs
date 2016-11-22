@@ -36,7 +36,7 @@ namespace DepthGuess
                 return null;
             }
 
-            Func<int, int, int> ToIndex = (x, y) => { return y * bmp.Height * 4 + x * 4; };
+            Func<int, int, int> ToIndex = (x, y) => { return y * bmp.Width * 4 + x * 4; };
 
             int[,] labelTable = new int[bmp.Height, bmp.Width];
 

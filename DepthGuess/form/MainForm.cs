@@ -78,7 +78,7 @@ namespace DepthGuess
                 SaveSettings();
             }
         }
-        
+
         private void StartButton_Click(object sender, EventArgs e)
         {
             stopButton.Enabled = true;
@@ -90,57 +90,51 @@ namespace DepthGuess
             {
                 logWriter.Write("処理を開始します");
 
-                LoadImage loadImage = new LoadImage(logWriter);
-                SaveImage saveImage = new SaveImage(logWriter);
 
-                MedianCut medianCut = new MedianCut(logWriter);
-                SobelFilter sobelFilter = new SobelFilter(logWriter);
                 ImageThreshold threshold = new ImageThreshold(logWriter);
-                EdgeExtraction edge = new EdgeExtraction(logWriter);
-                Labeling labeling = new Labeling(logWriter);
 
-                Guess01 guess1 = new Guess01(logWriter);
-
-                Bitmap originalImage = loadImage.Load(fileTextBox.Text);
+                Bitmap originalImage = new LoadImage(logWriter).Load(fileTextBox.Text);
                 new ImageWindow("元画像", originalImage, logWriter);
 
                 Color[] pallet;
-                Bitmap mediancutImage = medianCut.GetImage(originalImage, out pallet);
+                Bitmap mediancutImage = new MedianCut(8, logWriter).GetImage(originalImage, out pallet);
                 new ImageWindow("減色画像", mediancutImage, logWriter);
 
-                Bitmap thresholdImage = threshold.GetImage(mediancutImage, 128);
-                new ImageWindow("二値化画像", thresholdImage, logWriter);
+                //Bitmap thresholdImage = threshold.GetImage(mediancutImage, 128);
+                //new ImageWindow("二値化画像", thresholdImage, logWriter);
 
-                LabelStructure label = labeling.GetLabelTable(thresholdImage);
-                Bitmap labelImage = labeling.GetLabelImage(label);
+                LabelStructure label = new Labeling(logWriter).GetLabelTable(mediancutImage);
+                Bitmap labelImage = new Labeling(logWriter).GetLabelImage(label);
                 new ImageWindow("ラベリング画像", labelImage, logWriter);
 
-                int[,] depth = guess1.GetDepth(label);
+                int[,] depth = new Guess01(logWriter).GetDepth(label);
 
-                new ImageWindow("深さ情報", labeling.GetLabelImage(new LabelStructure(depth)), logWriter);
+                Bitmap depthImage = new Labeling(logWriter).GetLabelImage(new LabelStructure(depth));
+                new ImageWindow("深さ情報", depthImage, logWriter);
 
                 logWriter.Write("処理が完了しました");
 
-                Action save=() =>
-                {
-                    BeginInvoke(new Action<Image, int[,]>((Image img, int[,] dth) =>
-                    {
-                        DialogResult com = MessageBox.Show("3次元画像を保存しますか?", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                        if (com == DialogResult.Yes)
-                        {
-                            SaveFileDialog saveDialog = new SaveFileDialog();
-                            saveDialog.Filter = "3次元画像|*.rgbad;*.txt";
-                            saveDialog.Title = "保存";
-                            saveDialog.DefaultExt = "rgbad";
-                            if (saveDialog.ShowDialog() == DialogResult.OK)
-                            {
-                                string path = Path.GetDirectoryName(saveDialog.FileName) + "\\" + Path.GetFileNameWithoutExtension(saveDialog.FileName);
-                                saveImage.Save(originalImage, depth, path + ".txt");
-                                saveImage.SaveBinary(originalImage, depth, path + ".rgbad");
-                            }
-                        }
-                    }), new object[] { (Image)originalImage.Clone(), (int[,])depth.Clone() });
-                };
+                Action save = () =>
+                  {
+                      BeginInvoke(new Action<Image, int[,]>((Image img, int[,] dth) =>
+                      {
+                          DialogResult com = MessageBox.Show("3次元画像を保存しますか?", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                          if (com == DialogResult.Yes)
+                          {
+                              SaveFileDialog saveDialog = new SaveFileDialog();
+                              saveDialog.Filter = "3次元画像|*.rgbad;*.txt";
+                              saveDialog.Title = "保存";
+                              saveDialog.DefaultExt = "rgbad";
+                              if (saveDialog.ShowDialog() == DialogResult.OK)
+                              {
+                                  string path = Path.GetDirectoryName(saveDialog.FileName) + "\\" + Path.GetFileNameWithoutExtension(saveDialog.FileName);
+                                  SaveImage saveImage = new SaveImage(logWriter);
+                                  saveImage.Save(originalImage, depth, path + ".txt");
+                                  saveImage.SaveBinary(originalImage, depth, path + ".rgbad");
+                              }
+                          }
+                      }), new object[] { (Image)originalImage.Clone(), (int[,])depth.Clone() });
+                  };
 
                 //save();
 

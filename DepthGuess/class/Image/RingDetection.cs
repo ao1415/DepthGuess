@@ -31,7 +31,9 @@ namespace DepthGuess
 
             for (int n = label.Min; n <= label.Max; n++)
             {
+                logWriter.Write(string.Format("{0}/{1}", n - label.Min, label.Max - label.Min + 1));
                 link[n - label.Min] = GetInclusionNumber(label, n);
+                logWriter.RemoveLine();
             }
 
             logWriter.Write("ラベルの内包関係を調べました");
@@ -101,7 +103,7 @@ namespace DepthGuess
                     }
                 }
             }
-            
+
             return list.Distinct().ToArray();
         }
 
