@@ -55,7 +55,20 @@ namespace DepthGuess
                         table[label[y, x]] = false;
 
                     if (x - 1 < 0 || label.Width <= x + 1 || y - 1 < 0 || label.Height <= y + 1)
+                    {
                         table[label[y, x]] = true;
+
+                        for (int i = 0; i < 4; i++)
+                        {
+                            if (0 <= x + dx[i] && x + dx[i] < label.Width && 0 <= y + dy[i])
+                            {
+                                if (label[y + dy[i], x + dx[i]] != n)
+                                {
+                                    table[label[y + dy[i], x + dx[i]]] = true;
+                                }
+                            }
+                        }
+                    }
                     else
                     {
                         for (int i = 0; i < 4; i++)

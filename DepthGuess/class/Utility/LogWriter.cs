@@ -28,6 +28,8 @@ namespace DepthGuess
             form.BeginInvoke(new Action<string, Color>(Write), new object[] { date + text, Color.Green });
             Console.Out.WriteLine(date + text);
         }
+        /// <summary>通常のログを書き出す</summary>
+        /// <param name="obj">オブジェクト</param>
         public void Write(object obj) { Write(obj.ToString()); }
 
         /// <summary>エラーログを書き出す</summary>
@@ -39,6 +41,8 @@ namespace DepthGuess
             form.BeginInvoke(new Action<string, Color>(Write), new object[] { date + text, Color.Red });
             Console.Error.WriteLine(date + text);
         }
+        /// <summary>エラーログを書き出す</summary>
+        /// <param name="obj">オブジェクト</param>
         public void WriteError(object obj) { WriteError(obj.ToString()); }
 
         private void Write(string text, Color color)
