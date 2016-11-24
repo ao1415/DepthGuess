@@ -57,7 +57,9 @@ namespace DepthGuess
                 List<string> lines = new List<string>(logTextBox.Lines);
                 var line = lines.Count - 2;
                 lines.RemoveAt(line);
+                lines.RemoveAt(line);
                 logTextBox.Text = string.Join("\n", lines);
+                logTextBox.AppendText("\n");
             }));
         }
 

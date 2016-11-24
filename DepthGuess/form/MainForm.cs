@@ -136,7 +136,7 @@ namespace DepthGuess
                       }), new object[] { (Image)originalImage.Clone(), (int[,])depth.Clone() });
                   };
 
-                //save();
+                save();
 
                 BeginInvoke(new Action(() =>
                 {

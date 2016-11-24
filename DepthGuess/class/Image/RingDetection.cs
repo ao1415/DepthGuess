@@ -42,69 +42,51 @@ namespace DepthGuess
 
         private int[] GetInclusionNumber(LabelStructure label, int n)
         {
+            int[] dx = new int[] { -1, 0, 1, -1 };
+            int[] dy = new int[] { -1, -1, -1, 0 };
 
-            Func<int, int, HashSet<int>> inside = (int x, int y) =>
-            {
-                bool[,] checkTable = new bool[label.Height, label.Width];
-
-                Stack<Point> sta = new Stack<Point>();
-
-                HashSet<int> labelTable = new HashSet<int>();
-
-                checkTable[y, x] = true;
-                sta.Push(new Point(x, y));
-
-                while (sta.Count > 0)
-                {
-                    var point = sta.Pop();
-
-                    foreach (var dire in Config.Direction)
-                    {
-                        Point pos = new Point(point.X + dire.X, point.Y + dire.Y);
-
-                        if (0 <= pos.X && pos.X < label.Width && 0 <= pos.Y && pos.Y < label.Height)
-                        {
-                            if (!checkTable[pos.Y, pos.X])
-                            {
-                                if (label[pos.Y, pos.X] != n)
-                                {
-                                    checkTable[pos.Y, pos.X] = true;
-                                    sta.Push(pos);
-                                    labelTable.Add(label[pos.Y, pos.X]);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            return new HashSet<int>();
-                        }
-                    }
-                }
-
-                return labelTable;
-            };
-
-            HashSet<int> list = new HashSet<int>();
-            HashSet<int> check = new HashSet<int>();
-            check.Add(n);
+            Dictionary<int, bool> table = new Dictionary<int, bool>();
 
             for (int y = 0; y < label.Height; y++)
             {
                 for (int x = 0; x < label.Width; x++)
                 {
-                    if (check.Add(label[y, x]))
+                    if (!table.ContainsKey(label[y, x]))
+                        table[label[y, x]] = false;
+
+                    if (x - 1 < 0 || label.Width <= x + 1 || y - 1 < 0 || label.Height <= y + 1)
+                        table[label[y, x]] = true;
+                    else
                     {
-                        var table = inside(x, y);
-                        foreach (int v in table)
+                        for (int i = 0; i < 4; i++)
                         {
-                            list.Add(v);
-                            check.Add(v);
+                            if (0 <= x + dx[i] && x + dx[i] < label.Width && 0 <= y + dy[i])
+                            {
+                                if (label[y + dy[i], x + dx[i]] != n)
+                                {
+                                    int l = label[y + dy[i], x + dx[i]];
+                                    if (table[l])
+                                        table[label[y, x]] = true;
+                                }
+                            }
                         }
                     }
                 }
             }
 
-            return list.Distinct().ToArray();
+            HashSet<int> inclusion = new HashSet<int>();
+            for (int y = 0; y < label.Height; y++)
+            {
+                for (int x = 0; x < label.Width; x++)
+                {
+                    if (label[y, x] != n && !table[label[y, x]])
+                    {
+                        inclusion.Add(label[y, x]);
+                    }
+                }
+            }
+
+            return inclusion.ToArray();
         }
 
         public bool IsRing(LabelStructure label, int n)
