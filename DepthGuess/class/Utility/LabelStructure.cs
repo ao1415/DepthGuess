@@ -34,6 +34,13 @@ namespace DepthGuess
             }
 
         }
+        public LabelStructure(int w,int h)
+        {
+            label = new int[h, w];
+            max = min = 0;
+            width = w;
+            height = h;
+        }
 
         public int this[int y, int x]
         {
