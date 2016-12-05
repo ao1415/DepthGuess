@@ -5,6 +5,15 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 
+/*
+ * 画像を表示するウインドウを作成するクラスが定義されています。
+ * コンストラクタを呼び出すことで、新しくウインドウを作成します。
+ * ウインドウを右クリックすることで、
+ * ウインドウサイズを画像に合わせる
+ * 画像を保存する
+ * が選択できます。
+ */
+
 namespace DepthGuess
 {
     /// <summary>画像を表示するウインドウ</summary>
@@ -29,14 +38,10 @@ namespace DepthGuess
             }
 
             logWriter.Write(text + "を表示しました");
-
-            //Form form = new PictureForm(text, image, logWriter);
-            //form.Show();
-            //form.Refresh();
-
-
+            
             PictureForm form = new PictureForm((string)text.Clone(), (Image)image.Clone(), logWriter);
 
+            //別スレッドで表示を行う
             Thread thread = new Thread(new ParameterizedThreadStart((object data) =>
             {
                 Application.EnableVisualStyles();
@@ -48,6 +53,7 @@ namespace DepthGuess
 
         }
 
+        ///<summary>画像を表示するためのフォーム</summary>
         private class PictureForm : Form
         {
 

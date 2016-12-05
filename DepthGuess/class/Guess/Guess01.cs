@@ -15,7 +15,7 @@ namespace DepthGuess
             logWriter = writer;
         }
 
-        public int[,] GetDepth(LabelStructure label)
+        public LabelStructure GetDepth(LabelStructure label)
         {
             logWriter.Write("深さ推測を行います");
 
@@ -50,7 +50,7 @@ namespace DepthGuess
             }
 
             logWriter.Write("深さ推測を行いました");
-            return depthGrid.Label;
+            return depthGrid;
         }
 
     }

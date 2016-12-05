@@ -3,6 +3,12 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
+/*
+ * ログを書き出すクラスが定義されています。
+ * Writeを呼び出すことでログが一行追加されます。
+ * WriteErrorでエラーログが書き出せます。
+ */
+
 namespace DepthGuess
 {
     /// <summary>ログを書き出すクラス</summary>
@@ -54,6 +60,7 @@ namespace DepthGuess
             logTextBox.Refresh();
         }
 
+        /// <summary>最後の一行を削除する</summary>
         public void RemoveLine()
         {
             form.BeginInvoke(new Action(() =>
@@ -67,6 +74,7 @@ namespace DepthGuess
             }));
         }
 
+        /// <summary>現在の時間を取得</summary>
         private string GetNow()
         {
             string now = DateTime.Now.ToString("[HH:mm:ss.");
@@ -87,7 +95,7 @@ namespace DepthGuess
             form.BeginInvoke(new Action(() => { logTextBox.Refresh(); }));
         }
 
-        public Form MainForm { get { return form; } }
+        private Form MainForm { get { return form; } }
 
     }
 }

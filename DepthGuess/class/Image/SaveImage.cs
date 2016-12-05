@@ -45,7 +45,7 @@ namespace DepthGuess
         /// <param name="image">保存したい画像</param>
         /// <param name="depth">画像の深さデータ</param>
         /// <param name="path">保存したい場所</param>
-        public void Save(Bitmap image, int[,] depth, string path)
+        public void Save(Bitmap image, LabelStructure depth, string path)
         {
             logWriter.Write("三次元画像を保存します");
 
@@ -77,7 +77,7 @@ namespace DepthGuess
         /// <param name="image">保存したい画像</param>
         /// <param name="depth">画像の深さデータ</param>
         /// <param name="path">保存したい場所</param>
-        public void SaveBinary(Bitmap image, int[,] depth, string path)
+        public void SaveBinary(Bitmap image, LabelStructure depth, string path)
         {
             logWriter.Write("三次元画像を保存します");
 

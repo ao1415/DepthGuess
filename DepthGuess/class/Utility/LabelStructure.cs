@@ -4,8 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+/*
+ * ラベルの情報を管理するクラスが定義されています。
+ * 基本的にラベルはこのクラスで管理します。
+ * ラベルにアクセスしたい場合は
+ * LabelStructure[y,x]
+ * でアクセスすることができます。
+ */
+
 namespace DepthGuess
 {
+    /// <summary>ラベル情報を管理するクラス</summary>
     class LabelStructure
     {
 
@@ -54,6 +63,7 @@ namespace DepthGuess
         public int Width { get { return width; } }
         public int Height { get { return height; } }
 
+        /// <summary>ラベルの2次配列を取得します</summary>
         public int[,] Label { get { return label; } }
 
     }

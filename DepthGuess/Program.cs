@@ -4,6 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+/*
+ * ここはMainFormを起動している場所です。
+ * ここにコードを記述したり、削除したりしないでください。
+ * コードを書き込みたい場合は
+ * Form->MainForm.cs->MainForm.Desgner.cs->MainForm
+ * に書き込んでください。
+ */
+
 namespace DepthGuess
 {
     static class Program

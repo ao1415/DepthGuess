@@ -85,6 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class\Guess\Guess01.cs" />
+    <Compile Include="Class\Image\BrightnessConversion.cs" />
     <Compile Include="Class\Image\EdgeExtraction.cs" />
     <Compile Include="Class\Image\ImageThreshold.cs" />
     <Compile Include="Class\Image\Labeling.cs" />
@@ -92,16 +93,11 @@
     <Compile Include="Class\Image\RingDetection.cs" />
     <Compile Include="Class\Image\SaveImage.cs" />
     <Compile Include="Class\Image\SobelFilter.cs" />
+    <Compile Include="Class\Utility\HSV.cs" />
     <Compile Include="Class\Utility\ImageWindow.cs" />
     <Compile Include="Class\Image\LoadImage.cs" />
     <Compile Include="Class\Utility\LabelStructure.cs" />
     <Compile Include="Class\Utility\LogWriter.cs" />
-    <Compile Include="Form\Form1.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Form\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
-    </Compile>
     <Compile Include="Form\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -111,9 +107,6 @@
     <Compile Include="Class\Image\MedianCut.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Form\Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Form\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>

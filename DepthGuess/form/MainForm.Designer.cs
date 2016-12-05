@@ -1,4 +1,13 @@
-﻿namespace DepthGuess
+﻿/*
+ * ここはフォームのデザインを設定している場所です。
+ * すべてVisual Studioによって自動生成されます。
+ * ここを変更すると、デザインが壊れます。
+ * 絶対に変更しないでください。
+ * デザインを変更したい場合は、MainForm.csで変更してください。
+ */
+
+
+namespace DepthGuess
 {
     partial class MainForm
     {
