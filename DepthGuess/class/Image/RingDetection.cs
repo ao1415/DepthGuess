@@ -5,6 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+/*
+ * ラベル領域の内包関係を調べるクラスが定義されています。
+ * GetInclusionLinkでn番目の領域が内包している領域の情報を得られます。
+ * [0][1]=3ならば、0番の領域が3の領域を内包している
+ */
+
 namespace DepthGuess
 {
     class RingDetection
@@ -102,7 +108,7 @@ namespace DepthGuess
             return inclusion.ToArray();
         }
 
-        public bool IsRing(LabelStructure label, int n)
+        private bool IsRing(LabelStructure label, int n)
         {
             logWriter.Write("内包するものがあるか調べます");
 

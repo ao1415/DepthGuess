@@ -7,6 +7,11 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
+/*
+ * エッジを抽出するクラスが定義されています。
+ * GetImageでエッジが抽出された画像を得られます。
+ */
+
 namespace DepthGuess
 {
     /// <summary>エッジを抽出する</summary>

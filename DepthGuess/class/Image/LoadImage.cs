@@ -1,6 +1,11 @@
 ﻿using System;
 using System.Drawing;
 
+/*
+ * 画像を読み込むクラスが定義されています。
+ * Loadにファイルパスを渡すことで、画像が読み込めます。
+ */
+
 namespace DepthGuess
 {
     /// <summary>ファイルから画像を読み込む</summary>
@@ -29,9 +34,10 @@ namespace DepthGuess
                 logWriter.Write("画像を読み込みました");
                 return bmp;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 logWriter.WriteError("画像読み込みに失敗しました");
+                logWriter.WriteError(ex.ToString());
                 return null;
             }
         }

@@ -3,6 +3,11 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
+/*
+ * 画像にsobelフィルタをかけるクラスが定義されています。
+ * GetImageを呼び出すことで、フィルタがかかった画像を得られます。
+ */
+
 namespace DepthGuess
 {
     /// <summary>sobelフィルタを画像に適用する</summary>

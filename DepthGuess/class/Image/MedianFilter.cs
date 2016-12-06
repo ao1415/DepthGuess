@@ -5,6 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+/*
+ * 画像にメディアンフィルタをかけるクラスが定義されています。
+ * GetImageでフィルタをかけた画像を得られます。
+ * 未実装
+ */
+
 namespace DepthGuess.Class.Image
 {
     class MedianFilter

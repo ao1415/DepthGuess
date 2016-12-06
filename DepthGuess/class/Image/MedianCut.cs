@@ -4,6 +4,11 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
+/*
+ * 画像をメディアンカットを用いて、減色するクラスが定義されています。
+ * GetImageで減色画像と使用した色の配列を得られます。
+ */
+
 namespace DepthGuess
 {
     /// <summary>
@@ -181,6 +186,10 @@ namespace DepthGuess
             return bitmap;
         }
 
+        /// <summary>色のユークリッド距離を求める</summary>
+        /// <param name="c1">色</param>
+        /// <param name="c2">色</param>
+        /// <returns>距離</returns>
         private double GetColorRange(Color c1, Color c2)
         {
             int dr = c1.R - c2.R;

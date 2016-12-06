@@ -7,7 +7,12 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DepthGuess
+/*
+ * 画像の二値化を行うクラスです。
+ * GetImageで二値化された画像を得られます。
+ */
+   
+   namespace DepthGuess
 {
     /// <summary>二値化処理を行う</summary>
     class ImageThreshold

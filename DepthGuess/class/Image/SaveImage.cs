@@ -6,6 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+/*
+ * 画像を保存するクラスが定義されています。
+ * Saveに画像と、パスを渡すことで画像が保存されます。
+ */
+
 namespace DepthGuess
 {
     /// <summary>画像をファイルに保存する</summary>
@@ -64,9 +69,10 @@ namespace DepthGuess
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 logWriter.WriteError("三次元画像の保存に失敗しました");
+                logWriter.WriteError(ex.ToString());
                 return;
             }
 
@@ -79,6 +85,19 @@ namespace DepthGuess
         /// <param name="path">保存したい場所</param>
         public void SaveBinary(Bitmap image, LabelStructure depth, string path)
         {
+            /*
+             * バイナリデータの保存形式
+             * 0_3byte  画像の横幅(int)
+             * 4_7byte  画像の縦幅(int)
+             * 8_byte   色・深さの情報
+             * 8n   byte  赤色情報(byte)
+             * 8n+1 byte  緑色情報(byte)
+             * 8n+2 byte  青色情報(byte)
+             * 8n+3 byte  アルファ情報(byte)
+             * 8n+4_8n+7byte  深さ情報(int)
+             * 以下画像の大きさだけループ
+             */
+
             logWriter.Write("三次元画像を保存します");
 
             try
@@ -101,9 +120,10 @@ namespace DepthGuess
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 logWriter.WriteError("三次元画像の保存に失敗しました");
+                logWriter.WriteError(ex.ToString());
                 return;
             }
 

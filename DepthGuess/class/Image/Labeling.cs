@@ -8,6 +8,11 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
+/*
+ * 画像から、領域ごとに分割し、マッピングするクラスが定義されています。
+ * GetLabelTableで通常のラベリング処理を行えます。
+ */
+
 namespace DepthGuess
 {
     /// <summary>画像のラベルを作成する</summary>

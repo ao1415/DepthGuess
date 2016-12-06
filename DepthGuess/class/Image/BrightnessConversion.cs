@@ -7,6 +7,12 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
+/*
+ * 画像を明るさに変換するクラスが定義されています。
+ * GetBrightnessで明るさのラベルが得られます。
+ * 未実装
+ */
+
 namespace DepthGuess.Class.Image
 {
     class BrightnessConversion
