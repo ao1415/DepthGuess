@@ -191,7 +191,8 @@ namespace DepthGuess
                 }
             }
             val += 1;
-            int c = Math.Max(byte.MaxValue / val, 16);
+            int c = (byte.MaxValue + 1) / val;
+            if (c == 0) c = 16;
 
             logWriter.Write("分割数　　=" + val);
             logWriter.Write("色の変化量=" + c);

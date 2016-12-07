@@ -68,6 +68,9 @@ namespace DepthGuess
         /// </summary>
         private void StyleSetup()
         {
+            BackColor = Color.FromArgb(30, 30, 30);
+            ForeColor = SystemColors.Window;
+
             //MainFormのすべてのコントロールを列挙する
             foreach (var control in Controls)
             {
@@ -138,27 +141,45 @@ namespace DepthGuess
 
             Bitmap originalImage = new LoadImage(logWriter).Load(fileTextBox.Text);
             new ImageWindow("元画像", originalImage, logWriter);
+            if (originalImage == null) return;
 
-            Color[] pallet;
-            Bitmap mediancutImage = new MedianCut(8, logWriter).GetImage(originalImage, out pallet);
-            new ImageWindow("減色画像", mediancutImage, logWriter);
+            //Color[] pallet;
+            //Bitmap mediancutImage = new MedianCut(8, logWriter).GetImage(originalImage, out pallet);
+            //new ImageWindow("減色画像(メディアン)", mediancutImage, logWriter);
+
+            new ImageWindow("減色画像(k-means 32)", new K_means(16, logWriter).GetImage(originalImage), logWriter);
+            //new ImageWindow("減色画像(k-means 16)", new K_means(16, logWriter).GetImage(originalImage), logWriter);
+            //new ImageWindow("減色画像(k-means 8)", new K_means(8, logWriter).GetImage(originalImage), logWriter);
+            //new ImageWindow("減色画像(k-means 4)", new K_means(4, logWriter).GetImage(originalImage), logWriter);
+            //new ImageWindow("減色画像(k-means 2)", new K_means(2, logWriter).GetImage(originalImage), logWriter);
+
+            //LabelStructure brightnessLabel = new BrightnessConversion(logWriter).GetBrightness(originalImage);
+            //Bitmap brightnessImage = new Labeling(logWriter).GetLabelImage(brightnessLabel);
+            //new ImageWindow("元画像の輝度画像", brightnessImage, logWriter);
+
+            //LabelStructure brightnessLabel2 = new BrightnessConversion(logWriter).GetBrightness(mediancutImage);
+            //Bitmap brightnessImage2 = new Labeling(logWriter).GetLabelImage(brightnessLabel2);
+            //new ImageWindow("減色画像の輝度画像", brightnessImage2, logWriter);
+
+            //Bitmap mediancutImage2 = new MedianCut(8, logWriter).GetImage(brightnessImage, out pallet);
+            //new ImageWindow("元画像の輝度画像の減色画像", mediancutImage2, logWriter);
 
             //Bitmap thresholdImage = threshold.GetImage(mediancutImage, 128);
             //new ImageWindow("二値化画像", thresholdImage, logWriter);
 
             //ノイズ除去がしたい
 
-            LabelStructure label = new Labeling(logWriter).GetLabelTable(mediancutImage);
-            Bitmap labelImage = new Labeling(logWriter).GetLabelImage(label);
-            new ImageWindow("ラベリング画像", labelImage, logWriter);
+            //LabelStructure label = new Labeling(logWriter).GetLabelTable(mediancutImage);
+            //Bitmap labelImage = new Labeling(logWriter).GetLabelImage(label);
+            //new ImageWindow("ラベリング画像", labelImage, logWriter);
 
-            LabelStructure depth = new Guess01(logWriter).GetDepth(label);
+            //LabelStructure depth = new Guess01(logWriter).GetDepth(label);
 
-            Bitmap depthImage = new Labeling(logWriter).GetLabelImage(depth);
-            new ImageWindow("深さ情報", depthImage, logWriter);
+            //Bitmap depthImage = new Labeling(logWriter).GetLabelImage(depth);
+            //new ImageWindow("深さ情報", depthImage, logWriter);
 
             logWriter.Write("処理が完了しました");
-
+            /*
             Action save = () =>
             {
                 BeginInvoke(new Action<Image, int[,]>((Image img, int[,] dth) =>
@@ -182,7 +203,7 @@ namespace DepthGuess
             };
 
             save();
-
+            */
             BeginInvoke(new Action(() =>
             {
                 stopButton.Enabled = false;

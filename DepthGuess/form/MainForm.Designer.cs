@@ -125,7 +125,6 @@ namespace DepthGuess
             this.Name = "MainForm";
             this.ShowIcon = false;
             this.Text = "DepthGuess";
-            this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.ResumeLayout(false);

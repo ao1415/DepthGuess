@@ -13,7 +13,7 @@ using System.Threading.Tasks;
  * 未実装
  */
 
-namespace DepthGuess.Class.Image
+namespace DepthGuess
 {
     class BrightnessConversion
     {
