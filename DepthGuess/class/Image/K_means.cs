@@ -36,7 +36,7 @@ namespace DepthGuess
 
             SetColor(buf);
 
-            while (true)
+            for (int i = 0; i < 100; i++)
             {
                 var centroids = GetAverage();
                 SetColor(centroids);
@@ -139,7 +139,7 @@ namespace DepthGuess
 
         private double Range(Point3D p1, Point3D p2)
         {
-            //*
+            /*
             double x = p1.X - p2.X;
             double y = p1.Y - p2.Y;
             double z = p1.Z - p2.Z;

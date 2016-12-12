@@ -143,19 +143,32 @@ namespace DepthGuess
             new ImageWindow("元画像", originalImage, logWriter);
             if (originalImage == null) return;
 
+            LabelStructure brightnessLabel = new BrightnessConversion(logWriter).GetBrightness(originalImage);
+            Bitmap brightnessImage = new Labeling(logWriter).GetLabelImage(brightnessLabel);
+            new ImageWindow("元画像の輝度画像", brightnessImage, logWriter);
+
+            LabelStructure brightnessQuantizationLabel = brightnessLabel;
+
+            for (int y = 0; y < brightnessQuantizationLabel.Height; y++)
+            {
+                for (int x = 0; x < brightnessQuantizationLabel.Width; x++)
+                {
+                    brightnessQuantizationLabel[y, x] = brightnessQuantizationLabel[y, x] >> 6;
+                }
+            }
+
+            Bitmap brightnessQuantizationImage = new Labeling(logWriter).GetLabelImage(brightnessQuantizationLabel);
+            new ImageWindow("元画像の輝度画像の量子化", brightnessQuantizationImage, logWriter);
+
             //Color[] pallet;
             //Bitmap mediancutImage = new MedianCut(8, logWriter).GetImage(originalImage, out pallet);
             //new ImageWindow("減色画像(メディアン)", mediancutImage, logWriter);
 
-            new ImageWindow("減色画像(k-means 32)", new K_means(16, logWriter).GetImage(originalImage), logWriter);
+            //new ImageWindow("減色画像(k-means 32)", new K_means(16, logWriter).GetImage(originalImage), logWriter);
             //new ImageWindow("減色画像(k-means 16)", new K_means(16, logWriter).GetImage(originalImage), logWriter);
             //new ImageWindow("減色画像(k-means 8)", new K_means(8, logWriter).GetImage(originalImage), logWriter);
             //new ImageWindow("減色画像(k-means 4)", new K_means(4, logWriter).GetImage(originalImage), logWriter);
             //new ImageWindow("減色画像(k-means 2)", new K_means(2, logWriter).GetImage(originalImage), logWriter);
-
-            //LabelStructure brightnessLabel = new BrightnessConversion(logWriter).GetBrightness(originalImage);
-            //Bitmap brightnessImage = new Labeling(logWriter).GetLabelImage(brightnessLabel);
-            //new ImageWindow("元画像の輝度画像", brightnessImage, logWriter);
 
             //LabelStructure brightnessLabel2 = new BrightnessConversion(logWriter).GetBrightness(mediancutImage);
             //Bitmap brightnessImage2 = new Labeling(logWriter).GetLabelImage(brightnessLabel2);

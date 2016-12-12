@@ -118,6 +118,7 @@
     <Compile Include="Class\Utility\ImageWindow.cs" />
     <Compile Include="Class\Image\LoadImage.cs" />
     <Compile Include="Class\Utility\LabelStructure.cs" />
+    <Compile Include="Class\Utility\LAB.cs" />
     <Compile Include="Class\Utility\LogWriter.cs" />
     <Compile Include="Form\MainForm.cs">
       <SubType>Form</SubType>
