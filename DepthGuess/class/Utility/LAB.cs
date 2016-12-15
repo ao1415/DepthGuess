@@ -27,7 +27,13 @@ namespace DepthGuess
 
         private LAB(double _l, double _a, double _b)
         {
-
+            l = _l;
+            a = _a;
+            b = _b;
+        }
+        public override string ToString()
+        {
+            return "L*a*b*[L*=" + l.ToString() + ", a*=" + a.ToString() + ", b*=" + b.ToString() + "]";
         }
 
         public static LAB FromLAB(double _l, double _a, double _b)

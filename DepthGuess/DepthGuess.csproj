@@ -120,6 +120,7 @@
     <Compile Include="Class\Utility\LabelStructure.cs" />
     <Compile Include="Class\Utility\LAB.cs" />
     <Compile Include="Class\Utility\LogWriter.cs" />
+    <Compile Include="Class\Utility\PrograssWindow.cs" />
     <Compile Include="Form\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -128,9 +129,18 @@
     </Compile>
     <Compile Include="Class\Image\MedianCut.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="Form\PrograssForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form\PrograssForm.Designer.cs">
+      <DependentUpon>PrograssForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form\PrograssForm.resx">
+      <DependentUpon>PrograssForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

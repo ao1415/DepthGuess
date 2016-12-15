@@ -27,11 +27,24 @@ namespace DepthGuess
         public LabelStructure(int[,] _label)
         {
             label = _label;
-            max = int.MinValue;
-            min = int.MaxValue;
 
             height = label.GetLength(0);
             width = label.GetLength(1);
+
+            setMinMax();
+        }
+        public LabelStructure(int w,int h)
+        {
+            label = new int[h, w];
+            max = min = 0;
+            width = w;
+            height = h;
+        }
+
+        public void setMinMax()
+        {
+            max = int.MinValue;
+            min = int.MaxValue;
 
             for (int y = 0; y < Height; y++)
             {
@@ -41,14 +54,6 @@ namespace DepthGuess
                     min = Math.Min(min, label[y, x]);
                 }
             }
-
-        }
-        public LabelStructure(int w,int h)
-        {
-            label = new int[h, w];
-            max = min = 0;
-            width = w;
-            height = h;
         }
 
         public int this[int y, int x]

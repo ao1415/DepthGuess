@@ -35,11 +35,15 @@ namespace DepthGuess
 
             int[][] link = new int[label.Max - label.Min + 1][];
 
-            for (int n = label.Min; n <= label.Max; n++)
+            using (PrograssWindow pw = new PrograssWindow("内包検査", label.Max - label.Min + 1))
             {
-                logWriter.Write(string.Format("{0}/{1}", n - label.Min, label.Max - label.Min + 1));
-                link[n - label.Min] = GetInclusionNumber(label, n);
-                logWriter.RemoveLine();
+                Parallel.For(label.Min, label.Max + 1, (n, state) =>
+                  {
+                      link[n - label.Min] = GetInclusionNumber(label, n);
+                      pw.Add();
+                  });
+
+                pw.Join();
             }
 
             logWriter.Write("ラベルの内包関係を調べました");

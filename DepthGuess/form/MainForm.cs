@@ -136,35 +136,17 @@ namespace DepthGuess
         {
             logWriter.Write("処理を開始します");
 
-
             ImageThreshold threshold = new ImageThreshold(logWriter);
 
             Bitmap originalImage = new LoadImage(logWriter).Load(fileTextBox.Text);
             new ImageWindow("元画像", originalImage, logWriter);
             if (originalImage == null) return;
 
-            LabelStructure brightnessLabel = new BrightnessConversion(logWriter).GetBrightness(originalImage);
-            Bitmap brightnessImage = new Labeling(logWriter).GetLabelImage(brightnessLabel);
-            new ImageWindow("元画像の輝度画像", brightnessImage, logWriter);
-
-            LabelStructure brightnessQuantizationLabel = brightnessLabel;
-
-            for (int y = 0; y < brightnessQuantizationLabel.Height; y++)
-            {
-                for (int x = 0; x < brightnessQuantizationLabel.Width; x++)
-                {
-                    brightnessQuantizationLabel[y, x] = brightnessQuantizationLabel[y, x] >> 6;
-                }
-            }
-
-            Bitmap brightnessQuantizationImage = new Labeling(logWriter).GetLabelImage(brightnessQuantizationLabel);
-            new ImageWindow("元画像の輝度画像の量子化", brightnessQuantizationImage, logWriter);
-
             //Color[] pallet;
             //Bitmap mediancutImage = new MedianCut(8, logWriter).GetImage(originalImage, out pallet);
             //new ImageWindow("減色画像(メディアン)", mediancutImage, logWriter);
 
-            //new ImageWindow("減色画像(k-means 32)", new K_means(16, logWriter).GetImage(originalImage), logWriter);
+            //new ImageWindow("減色画像(k-means 32)", new K_means(32, logWriter).GetImage(originalImage), logWriter);
             //new ImageWindow("減色画像(k-means 16)", new K_means(16, logWriter).GetImage(originalImage), logWriter);
             //new ImageWindow("減色画像(k-means 8)", new K_means(8, logWriter).GetImage(originalImage), logWriter);
             //new ImageWindow("減色画像(k-means 4)", new K_means(4, logWriter).GetImage(originalImage), logWriter);
@@ -180,19 +162,25 @@ namespace DepthGuess
             //Bitmap thresholdImage = threshold.GetImage(mediancutImage, 128);
             //new ImageWindow("二値化画像", thresholdImage, logWriter);
 
+            Bitmap kmeansImage = new K_means(8, logWriter).GetImage(originalImage);
+            new ImageWindow("減色画像(k-means)", kmeansImage, logWriter);
+
             //ノイズ除去がしたい
 
-            //LabelStructure label = new Labeling(logWriter).GetLabelTable(mediancutImage);
-            //Bitmap labelImage = new Labeling(logWriter).GetLabelImage(label);
-            //new ImageWindow("ラベリング画像", labelImage, logWriter);
+            Bitmap medianImage = new MedianFilter(logWriter).GetImage(kmeansImage);
+            new ImageWindow("メディアンフィルタ", medianImage, logWriter);
 
-            //LabelStructure depth = new Guess01(logWriter).GetDepth(label);
+            LabelStructure label = new Labeling(logWriter).GetLabelTable(medianImage);
+            Bitmap labelImage = new Labeling(logWriter).GetLabelImage(label);
+            new ImageWindow("ラベリング画像", labelImage, logWriter);
 
-            //Bitmap depthImage = new Labeling(logWriter).GetLabelImage(depth);
-            //new ImageWindow("深さ情報", depthImage, logWriter);
+            LabelStructure depth = new Guess01(logWriter).GetDepth(label);
+
+            Bitmap depthImage = new Labeling(logWriter).GetLabelImage(depth);
+            new ImageWindow("深さ情報", depthImage, logWriter);
 
             logWriter.Write("処理が完了しました");
-            /*
+            //*
             Action save = () =>
             {
                 BeginInvoke(new Action<Image, int[,]>((Image img, int[,] dth) =>
@@ -210,13 +198,15 @@ namespace DepthGuess
                             SaveImage saveImage = new SaveImage(logWriter);
                             saveImage.Save(originalImage, depth, path + ".txt");
                             saveImage.SaveBinary(originalImage, depth, path + ".rgbad");
+                            depth.setMinMax();
+                            saveImage.SaveChip(originalImage, depth, path);
                         }
                     }
                 }), new object[] { (Image)originalImage.Clone(), (int[,])depth.Label.Clone() });
             };
 
             save();
-            */
+            //*/
             BeginInvoke(new Action(() =>
             {
                 stopButton.Enabled = false;

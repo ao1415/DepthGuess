@@ -95,7 +95,37 @@ namespace DepthGuess
             form.BeginInvoke(new Action(() => { logTextBox.Refresh(); }));
         }
 
-        private Form MainForm { get { return form; } }
+        public RichTextBox TextBox { get { return logTextBox; } }
+        public Form MainForm { get { return form; } }
 
     }
+
+    class ProgressWriter : LogWriter
+    {
+        object o = new object();
+
+        int count = 0;
+        int max = 0;
+
+        public ProgressWriter(LogWriter writer, int n) : base(writer.MainForm, writer.TextBox)
+        {
+            max = n;
+        }
+
+        public void Add()
+        {
+            lock (o)
+            {
+                count++;
+                //if (count % 100 == 0)
+                {
+                    RemoveLine();
+                    Write(count.ToString() + "/" + max.ToString());
+                }
+            }
+        }
+
+    }
+
+
 }

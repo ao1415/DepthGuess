@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -129,6 +131,52 @@ namespace DepthGuess
 
             logWriter.Write("三次元画像を保存しました");
             logWriter.Write("path=" + path);
+        }
+
+        public void SaveChip(Bitmap image, LabelStructure depth, string path)
+        {
+            logWriter.Write("画像を保存します");
+
+            try
+            {
+                for (int i = depth.Min; i <= depth.Max; i++)
+                {
+                    Bitmap bitmap = new Bitmap(image);
+                    BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+                    byte[] buf = new byte[bitmap.Width * bitmap.Height * 4];
+                    Marshal.Copy(data.Scan0, buf, 0, buf.Length);
+
+                    for (int y = 0; y < bitmap.Height; y++)
+                    {
+                        for (int x = 0; x < bitmap.Width; x++)
+                        {
+                            if (depth[y, x] != i)
+                            {
+                                int index = y * bitmap.Width * 4 + x * 4;
+                                buf[index + 0] = 0;
+                                buf[index + 1] = 0;
+                                buf[index + 2] = 0;
+                                buf[index + 3] = 0;
+                            }
+                        }
+                    }
+
+                    Marshal.Copy(buf, 0, data.Scan0, buf.Length);
+                    bitmap.UnlockBits(data);
+
+                    string name = path + i.ToString() + ".png";
+                    bitmap.Save(name);
+                    logWriter.Write("path=" + name);
+                }
+            }
+            catch (Exception ex)
+            {
+                logWriter.WriteError("三次元画像の保存に失敗しました");
+                logWriter.WriteError(ex.ToString());
+                return;
+            }
+
+            logWriter.Write("画像を保存しました");
         }
 
     }

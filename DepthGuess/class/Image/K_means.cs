@@ -95,7 +95,8 @@ namespace DepthGuess
             {
                 int n = rnd.Next(0, colors.Length);
 
-                Point3D point = new Point3D(buf[i + 0], buf[i + 1], buf[i + 2]);
+                LAB lab = LAB.FromRGB(buf[i + 0], buf[i + 1], buf[i + 2]);
+                Point3D point = new Point3D(lab.L, lab.A, lab.B);
                 if (hash.Add(point))
                 {
                     colorLists[n].Add(point);
@@ -139,7 +140,7 @@ namespace DepthGuess
 
         private double Range(Point3D p1, Point3D p2)
         {
-            /*
+            //*
             double x = p1.X - p2.X;
             double y = p1.Y - p2.Y;
             double z = p1.Z - p2.Z;
@@ -168,7 +169,8 @@ namespace DepthGuess
 
             for (int i = 0; i < buf.Length; i += 4)
             {
-                Point3D c = new Point3D(buf[i + 0], buf[i + 1], buf[i + 2]);
+                LAB lab = LAB.FromRGB(buf[i + 0], buf[i + 1], buf[i + 2]);
+                Point3D c = new Point3D(lab.L, lab.A, lab.B);
 
                 int min = 0;
                 double minR = double.MaxValue;
@@ -182,9 +184,11 @@ namespace DepthGuess
                     }
                 }
 
-                buf[i + 0] = (byte)center[min].X;
-                buf[i + 1] = (byte)center[min].Y;
-                buf[i + 2] = (byte)center[min].Z;
+                Color color = LAB.ToRGB(LAB.FromLAB(center[min].X, center[min].Y, center[min].Z));
+
+                buf[i + 0] = color.R;
+                buf[i + 1] = color.G;
+                buf[i + 2] = color.B;
             }
 
         }
