@@ -193,7 +193,7 @@ namespace DepthGuess
                             SaveImage saveImage = new SaveImage(logWriter);
                             saveImage.Save(originalImage, depth, path + ".txt");
                             saveImage.SaveBinary(originalImage, depth, path + ".rgbad");
-                            depth.setMinMax();
+                            depth.SetMinMax();
                             saveImage.SaveChip(originalImage, depth, path);
                         }
                     }
@@ -224,7 +224,7 @@ namespace DepthGuess
                     SaveImage saveImage = new SaveImage(logWriter);
                     saveImage.Save(image, depth, path + ".txt");
                     saveImage.SaveBinary(image, depth, path + ".rgbad");
-                    depth.setMinMax();
+                    depth.SetMinMax();
                     saveImage.SaveChip(image, depth, path);
                 }
             }
@@ -235,19 +235,40 @@ namespace DepthGuess
         private async Task ProcessAsync()
         {
             logWriter.Write("処理を開始します");
-            var token = tokenSource.Token;
+            CancellationToken token = tokenSource.Token;
 
-            for (int i = 0; i < 100; i++)
-            {
-                token.ThrowIfCancellationRequested();
-                await Task.Delay(TimeSpan.FromMilliseconds(50));
-            }
+            Bitmap originalImage = await Task.Run(() => { return new LoadImage(logWriter).Load(fileTextBox.Text); });
+            token.ThrowIfCancellationRequested();
 
-            Bitmap originalImage = new LoadImage(logWriter).Load(fileTextBox.Text);
-            new ImageWindow("元画像", originalImage, logWriter);
             if (originalImage == null) return;
 
-            //SaveImage(null, null);
+            new ImageWindow("元画像", originalImage, logWriter);
+
+            Bitmap kmeansImage = await Task.Run(() => { return new K_means(8, logWriter).GetImage(originalImage, tokenSource); });
+            token.ThrowIfCancellationRequested();
+
+            new ImageWindow("減色画像(k-means)", kmeansImage, logWriter);
+
+            Bitmap medianImage = await Task.Run(() => { return new MedianFilter(logWriter).GetImage(kmeansImage); });
+            token.ThrowIfCancellationRequested();
+
+            new ImageWindow("メディアンフィルタ", medianImage, logWriter);
+            token.ThrowIfCancellationRequested();
+
+            LabelStructure label = await Task.Run(() => { return new Labeling(logWriter).GetLabelTable(medianImage, tokenSource); });
+            token.ThrowIfCancellationRequested();
+
+            Bitmap labelImage = await Task.Run(() => { return new Labeling(logWriter).GetLabelImage(label); });
+
+            new ImageWindow("ラベリング画像", labelImage, logWriter);
+
+            LabelStructure depth = await Task.Run(() => { return new Guess01(logWriter).GetDepth(label, tokenSource); });
+            token.ThrowIfCancellationRequested();
+
+            Bitmap depthImage = new Labeling(logWriter).GetLabelImage(depth);
+            new ImageWindow("深さ情報", depthImage, logWriter);
+
+            SaveImage(originalImage, depth);
             logWriter.Write("処理が完了しました");
         }
 

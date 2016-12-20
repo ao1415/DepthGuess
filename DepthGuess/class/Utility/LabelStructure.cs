@@ -29,7 +29,7 @@ namespace DepthGuess
             Height = label.GetLength(0);
             Width = label.GetLength(1);
 
-            setMinMax();
+            SetMinMax();
         }
         public LabelStructure(int w,int h)
         {
@@ -39,7 +39,7 @@ namespace DepthGuess
             Height = h;
         }
 
-        public void setMinMax()
+        public void SetMinMax()
         {
             max = int.MinValue;
             min = int.MaxValue;

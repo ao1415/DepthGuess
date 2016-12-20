@@ -5,6 +5,7 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media.Media3D;
 
@@ -20,43 +21,6 @@ namespace DepthGuess
         {
             logWriter = writer;
             colors = new List<Point3D>[colorNum];
-        }
-
-        public Bitmap GetImage(Bitmap bmp)
-        {
-            logWriter.Write("k-means法を開始します");
-
-            center = new Point3D[colors.Length];
-
-            Bitmap bitmap = new Bitmap(bmp);
-            BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
-
-            byte[] buf = new byte[bitmap.Width * bitmap.Height * 4];
-            Marshal.Copy(data.Scan0, buf, 0, buf.Length);
-
-            SetColor(buf);
-
-            for (int i = 0; i < 100; i++)
-            {
-                var centroids = GetAverage();
-                SetColor(centroids);
-
-                if (Diff(center, centroids))
-                {
-                    center = centroids;
-                    break;
-                }
-                center = centroids;
-            }
-
-            Replace(buf);
-
-            Marshal.Copy(buf, 0, data.Scan0, buf.Length);
-            bitmap.UnlockBits(data);
-
-            logWriter.Write("k-means法が完了しました");
-
-            return bitmap;
         }
 
         private Point3D[] GetAverage()
@@ -192,5 +156,87 @@ namespace DepthGuess
             }
 
         }
+
+        public Bitmap GetImage(Bitmap bmp)
+        {
+            logWriter.Write("k-means法を開始します");
+
+            center = new Point3D[colors.Length];
+
+            Bitmap bitmap = new Bitmap(bmp);
+            BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+
+            byte[] buf = new byte[bitmap.Width * bitmap.Height * 4];
+            Marshal.Copy(data.Scan0, buf, 0, buf.Length);
+
+            SetColor(buf);
+
+            for (int i = 0; i < 100; i++)
+            {
+                var centroids = GetAverage();
+                SetColor(centroids);
+
+                if (Diff(center, centroids))
+                {
+                    center = centroids;
+                    break;
+                }
+                center = centroids;
+            }
+
+            Replace(buf);
+
+            Marshal.Copy(buf, 0, data.Scan0, buf.Length);
+            bitmap.UnlockBits(data);
+
+            logWriter.Write("k-means法が完了しました");
+
+            return bitmap;
+        }
+
+        public Bitmap GetImage(Bitmap bmp, CancellationTokenSource token)
+        {
+            logWriter.Write("k-means法を開始します");
+
+            center = new Point3D[colors.Length];
+
+            Bitmap bitmap = new Bitmap(bmp);
+            BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+
+            byte[] buf = new byte[bitmap.Width * bitmap.Height * 4];
+            Marshal.Copy(data.Scan0, buf, 0, buf.Length);
+
+            SetColor(buf);
+
+            for (int i = 0; i < 100; i++)
+            {
+                if (token.IsCancellationRequested)
+                {
+                    bitmap.UnlockBits(data);
+                    return null;
+                }
+
+                var centroids = GetAverage();
+                SetColor(centroids);
+
+                if (Diff(center, centroids))
+                {
+                    center = centroids;
+                    break;
+                }
+                center = centroids;
+            }
+
+
+            Replace(buf);
+
+            Marshal.Copy(buf, 0, data.Scan0, buf.Length);
+            bitmap.UnlockBits(data);
+
+            logWriter.Write("k-means法が完了しました");
+
+            return bitmap;
+        }
+
     }
 }

@@ -26,11 +26,14 @@ namespace DepthGuess
 
         public void Add()
         {
-            try
-            {
-                form.BeginInvoke(new Action(() => { form.Add(); }));
-            }
-            catch (InvalidOperationException) { }
+            if (!form.IsDisposed)
+                form.BeginInvoke(new Action(() =>{form.Add();}));
+        }
+
+        public void Close()
+        {
+            if (!form.IsDisposed)
+                form.BeginInvoke(new Action(() => { form.Close(); }));
         }
 
         public void Join()

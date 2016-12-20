@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 /*
@@ -29,7 +30,7 @@ namespace DepthGuess
 
         /// <summary>画像からラベルを作成する</summary>
         /// <param name="bmp">ラベルを作成したい画像</param>
-        /// <returns>ラベル情報<see cref="int[,]"/></returns>
+        /// <returns>ラベル情報<see cref="LabelStructure"/></returns>
         public LabelStructure GetLabelTable(Bitmap bmp)
         {
             logWriter.Write("ラベリング処理を行います");
@@ -48,6 +49,7 @@ namespace DepthGuess
             BitmapData data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
             byte[] buf = new byte[bmp.Width * bmp.Height * 4];
             Marshal.Copy(data.Scan0, buf, 0, buf.Length);
+            bmp.UnlockBits(data);
 
             #region ラベル番号の設定
             Dictionary<int, int> lookupTable = new Dictionary<int, int>();
@@ -100,7 +102,129 @@ namespace DepthGuess
                     }
                 }
             }
+            #endregion
+
+            #region ラベル番号の最適化
+            var keys = lookupTable.Keys.ToArray();
+            foreach (var key in keys)
+            {
+                lookupTable[key] = lookupTable[lookupTable[key]];
+            }
+
+            List<KeyValuePair<int, int>> keyValueList = new List<KeyValuePair<int, int>>(lookupTable);
+            keyValueList.Sort((KeyValuePair<int, int> k1, KeyValuePair<int, int> k2) =>
+            {
+                return k1.Value - k2.Value;
+            });
+            {
+                int labelNum = -1;
+                int now = 0;
+                for (int i = 0; i < keyValueList.Count; i++)
+                {
+                    int key = keyValueList[i].Key;
+                    if (now == keyValueList[i].Value)
+                    {
+                        lookupTable[key] = labelNum;
+                    }
+                    else
+                    {
+                        labelNum++;
+                        now = keyValueList[i].Value;
+                        lookupTable[key] = labelNum;
+                    }
+                }
+            }
+
+            for (int y = 0; y < bmp.Height; y++)
+            {
+                for (int x = 0; x < bmp.Width; x++)
+                {
+                    labelTable[y, x] = lookupTable[labelTable[y, x]];
+                }
+            }
+            #endregion
+
+            logWriter.Write("ラベリング処理が完了しました");
+            return new LabelStructure(labelTable);
+        }
+
+        /// <summary>画像からラベルを作成する</summary>
+        /// <param name="bmp">ラベルを作成したい画像</param>
+        /// <param name="token">中断用構造体</param>
+        /// <returns>ラベル情報<see cref="LabelStructure" /></returns>
+        public LabelStructure GetLabelTable(Bitmap bmp, CancellationTokenSource token)
+        {
+            logWriter.Write("ラベリング処理を行います");
+
+            if (bmp == null)
+            {
+                logWriter.WriteError("画像が存在しません");
+                logWriter.WriteError("ラベリング処理を中止します");
+                return null;
+            }
+
+            Func<int, int, int> ToIndex = (x, y) => { return y * bmp.Width * 4 + x * 4; };
+
+            int[,] labelTable = new int[bmp.Height, bmp.Width];
+
+            BitmapData data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            byte[] buf = new byte[bmp.Width * bmp.Height * 4];
+            Marshal.Copy(data.Scan0, buf, 0, buf.Length);
             bmp.UnlockBits(data);
+
+            #region ラベル番号の設定
+            Dictionary<int, int> lookupTable = new Dictionary<int, int>();
+            int label = 0;
+            for (int y = 0; y < bmp.Height; y++)
+            {
+                for (int x = 0; x < bmp.Width; x++)
+                {
+                    if (token.IsCancellationRequested) return null;
+
+                    int index = ToIndex(x, y);
+                    int r = buf[index + 0];
+                    int g = buf[index + 1];
+                    int b = buf[index + 2];
+
+                    int minLabel = int.MaxValue;
+
+                    var dire = new Point[] { new Point(-1, -1), new Point(0, -1), new Point(1, -1), new Point(-1, 0) };
+                    List<Point> plist = new List<Point>();
+
+                    foreach (var d in dire)
+                    {
+                        Point pos = new Point(x + d.X, y + d.Y);
+
+                        if (0 <= pos.X && pos.X < bmp.Width && 0 <= pos.Y)
+                        {
+                            int index2 = ToIndex(pos.X, pos.Y);
+                            if (r == buf[index2 + 0] && g == buf[index2 + 1] && b == buf[index2 + 2])
+                            {
+                                plist.Add(pos);
+                                minLabel = Math.Min(minLabel, labelTable[pos.Y, pos.X]);
+                            }
+                        }
+
+                    }
+
+                    foreach (var p in plist)
+                    {
+                        lookupTable[labelTable[p.Y, p.X]] = Math.Min(minLabel, lookupTable[labelTable[p.Y, p.X]]);
+                    }
+
+                    if (minLabel != int.MaxValue)
+                    {
+                        labelTable[y, x] = minLabel;
+                        lookupTable[minLabel] = Math.Min(minLabel, lookupTable[minLabel]);
+                    }
+                    else
+                    {
+                        labelTable[y, x] = label + 1;
+                        lookupTable[labelTable[y, x]] = labelTable[y, x];
+                        label++;
+                    }
+                }
+            }
             #endregion
 
             #region ラベル番号の最適化
@@ -182,15 +306,8 @@ namespace DepthGuess
             }
 
             Bitmap bitmap = new Bitmap(label.Width, label.Height);
-            int val = 0;
-            for (int y = 0; y < bitmap.Height; y++)
-            {
-                for (int x = 0; x < bitmap.Width; x++)
-                {
-                    val = Math.Max(val, label[y, x]);
-                }
-            }
-            val += 1;
+            label.SetMinMax();
+            int val = label.Max - label.Min + 1;
             int c = (byte.MaxValue + 1) / val;
             if (c == 0) c = 16;
 
@@ -207,7 +324,7 @@ namespace DepthGuess
                     for (int x = 0; x < bitmap.Width; x++)
                     {
                         int index = y * bitmap.Width * 4 + x * 4;
-                        int color = (label[y, x] * c) & byte.MaxValue;
+                        int color = label[y, x] * c;
                         buf[index + 0] = buf[index + 1] = buf[index + 2] = (byte)color;
                         buf[index + 3] = byte.MaxValue;
                     }

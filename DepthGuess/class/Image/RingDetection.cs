@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 /*
@@ -38,10 +39,43 @@ namespace DepthGuess
             using (PrograssWindow pw = new PrograssWindow("内包検査", label.Max - label.Min + 1))
             {
                 Parallel.For(label.Min, label.Max + 1, (n, state) =>
-                  {
-                      link[n - label.Min] = GetInclusionNumber(label, n);
-                      pw.Add();
-                  });
+                {
+                    link[n - label.Min] = GetInclusionNumber(label, n);
+                    pw.Add();
+                });
+
+                pw.Join();
+            }
+
+            logWriter.Write("ラベルの内包関係を調べました");
+            return link;
+        }
+
+        public int[][] GetInclusionLink(LabelStructure label, CancellationTokenSource token)
+        {
+            logWriter.Write("ラベルの内包関係を調べます");
+
+            if (label == null)
+            {
+                logWriter.WriteError("ラベル情報がありません");
+                logWriter.WriteError("処理を中止します");
+                return null;
+            }
+
+            int[][] link = new int[label.Max - label.Min + 1][];
+
+            using (PrograssWindow pw = new PrograssWindow("内包検査", label.Max - label.Min + 1))
+            {
+                Parallel.For(label.Min, label.Max + 1, (n, state) =>
+                {
+                    if (token.IsCancellationRequested)
+                    {
+                        pw.Close();
+                        state.Break();
+                    }
+                    link[n - label.Min] = GetInclusionNumber(label, n);
+                    pw.Add();
+                });
 
                 pw.Join();
             }
