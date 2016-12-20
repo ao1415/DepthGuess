@@ -14,15 +14,15 @@ namespace DepthGuess
     /// <summary>ログを書き出すクラス</summary>
     class LogWriter
     {
-        private RichTextBox logTextBox;
-        private Form form;
+        public RichTextBox LogTextBox { get; }
+        public Form MainForm { get; }
 
         /// <summary>コンストラクタ</summary>
         /// <param name="textBox">テキストボックス</param>
         public LogWriter(Form mainForm, RichTextBox textBox)
         {
-            logTextBox = textBox;
-            form = mainForm;
+            LogTextBox = textBox;
+            MainForm = mainForm;
         }
 
         /// <summary>通常のログを書き出す</summary>
@@ -31,7 +31,7 @@ namespace DepthGuess
         {
             string date = GetNow();
 
-            form.BeginInvoke(new Action<string, Color>(Write), new object[] { date + text, Color.Green });
+            MainForm.BeginInvoke(new Action<string, Color>(Write), new object[] { date + text, Color.Green });
             Console.Out.WriteLine(date + text);
         }
         /// <summary>通常のログを書き出す</summary>
@@ -44,7 +44,7 @@ namespace DepthGuess
         {
             string date = GetNow();
 
-            form.BeginInvoke(new Action<string, Color>(Write), new object[] { date + text, Color.Red });
+            MainForm.BeginInvoke(new Action<string, Color>(Write), new object[] { date + text, Color.Red });
             Console.Error.WriteLine(date + text);
         }
         /// <summary>エラーログを書き出す</summary>
@@ -53,24 +53,24 @@ namespace DepthGuess
 
         private void Write(string text, Color color)
         {
-            logTextBox.Focus();
-            logTextBox.SelectionLength = 0;
-            logTextBox.SelectionColor = color;
-            logTextBox.AppendText(text + "\n");
-            logTextBox.Refresh();
+            LogTextBox.Focus();
+            LogTextBox.SelectionLength = 0;
+            LogTextBox.SelectionColor = color;
+            LogTextBox.AppendText(text + "\n");
+            LogTextBox.Refresh();
         }
 
         /// <summary>最後の一行を削除する</summary>
         public void RemoveLine()
         {
-            form.BeginInvoke(new Action(() =>
+            MainForm.BeginInvoke(new Action(() =>
             {
-                List<string> lines = new List<string>(logTextBox.Lines);
+                List<string> lines = new List<string>(LogTextBox.Lines);
                 var line = lines.Count - 2;
                 lines.RemoveAt(line);
                 lines.RemoveAt(line);
-                logTextBox.Text = string.Join("\n", lines);
-                logTextBox.AppendText("\n");
+                LogTextBox.Text = string.Join("\n", lines);
+                LogTextBox.AppendText("\n");
             }));
         }
 
@@ -86,46 +86,15 @@ namespace DepthGuess
         /// <summary>テキストボックスの文字列を全削除する</summary>
         public void Clear()
         {
-            form.BeginInvoke(new Action(() => { logTextBox.Clear(); }));
+            MainForm.BeginInvoke(new Action(() => { LogTextBox.Clear(); }));
         }
 
         /// <summary>テキストボックスを強制的に再描写する</summary>
         public void Refresh()
         {
-            form.BeginInvoke(new Action(() => { logTextBox.Refresh(); }));
+            MainForm.BeginInvoke(new Action(() => { LogTextBox.Refresh(); }));
         }
-
-        public RichTextBox TextBox { get { return logTextBox; } }
-        public Form MainForm { get { return form; } }
-
+        
     }
-
-    class ProgressWriter : LogWriter
-    {
-        object o = new object();
-
-        int count = 0;
-        int max = 0;
-
-        public ProgressWriter(LogWriter writer, int n) : base(writer.MainForm, writer.TextBox)
-        {
-            max = n;
-        }
-
-        public void Add()
-        {
-            lock (o)
-            {
-                count++;
-                //if (count % 100 == 0)
-                {
-                    RemoveLine();
-                    Write(count.ToString() + "/" + max.ToString());
-                }
-            }
-        }
-
-    }
-
 
 }

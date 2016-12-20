@@ -21,15 +21,13 @@ namespace DepthGuess
         private int[,] label;
         private int max;
         private int min;
-        private int width;
-        private int height;
 
         public LabelStructure(int[,] _label)
         {
             label = _label;
 
-            height = label.GetLength(0);
-            width = label.GetLength(1);
+            Height = label.GetLength(0);
+            Width = label.GetLength(1);
 
             setMinMax();
         }
@@ -37,8 +35,8 @@ namespace DepthGuess
         {
             label = new int[h, w];
             max = min = 0;
-            width = w;
-            height = h;
+            Width = w;
+            Height = h;
         }
 
         public void setMinMax()
@@ -65,8 +63,8 @@ namespace DepthGuess
         public int Max { get { return max; } }
         public int Min { get { return min; } }
 
-        public int Width { get { return width; } }
-        public int Height { get { return height; } }
+        public int Width { get; }
+        public int Height { get; }
 
         /// <summary>ラベルの2次配列を取得します</summary>
         public int[,] Label { get { return label; } }

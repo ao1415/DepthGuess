@@ -41,11 +41,6 @@ namespace DepthGuess
         private LogWriter logWriter;
 
         /// <summary>
-        /// 画像処理用のスレッド
-        /// </summary>
-        private Thread processThread;
-
-        /// <summary>
         /// クラスの初期化を行います。
         /// </summary>
         public MainForm()
@@ -214,29 +209,46 @@ namespace DepthGuess
             }));
         }
 
-        /// <summary>
-        /// もう一つのProcessです。
-        /// 呼び出したいときには上記のProcessに1を付けて、下記のプロセスの2を消してください。
-        /// </summary>
-        private void Process2()
+        private void SaveImage(Bitmap image, LabelStructure depth)
         {
+            DialogResult com = MessageBox.Show("3次元画像を保存しますか?", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (com == DialogResult.Yes)
+            {
+                SaveFileDialog saveDialog = new SaveFileDialog();
+                saveDialog.Filter = "3次元画像|*.rgbad;*.txt";
+                saveDialog.Title = "保存";
+                saveDialog.DefaultExt = "rgbad";
+                if (saveDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string path = Path.GetDirectoryName(saveDialog.FileName) + "\\" + Path.GetFileNameWithoutExtension(saveDialog.FileName);
+                    SaveImage saveImage = new SaveImage(logWriter);
+                    saveImage.Save(image, depth, path + ".txt");
+                    saveImage.SaveBinary(image, depth, path + ".rgbad");
+                    depth.setMinMax();
+                    saveImage.SaveChip(image, depth, path);
+                }
+            }
+        }
+
+        /// <summary>タスク中止用の変数</summary>
+        private CancellationTokenSource tokenSource = null;
+        private async Task ProcessAsync()
+        {
+            logWriter.Write("処理を開始します");
+            var token = tokenSource.Token;
+
+            for (int i = 0; i < 100; i++)
+            {
+                token.ThrowIfCancellationRequested();
+                await Task.Delay(TimeSpan.FromMilliseconds(50));
+            }
 
             Bitmap originalImage = new LoadImage(logWriter).Load(fileTextBox.Text);
             new ImageWindow("元画像", originalImage, logWriter);
-
             if (originalImage == null) return;
 
-            Mat src = BitmapConverter.ToMat(originalImage);
-            Mat gray = src.CvtColor(ColorConversionCodes.BGR2GRAY);
-            Mat binary = gray.Threshold(0, 255, ThresholdTypes.Otsu | ThresholdTypes.Binary);
-
-            ConnectedComponents cc = Cv2.ConnectedComponentsEx(binary);
-
-            Mat dst = new Mat();
-            cc.RenderBlobs(dst);
-
-            Image grayImage = BitmapConverter.ToBitmap(dst);
-            new ImageWindow("Gray", grayImage, logWriter);
+            //SaveImage(null, null);
+            logWriter.Write("処理が完了しました");
         }
 
         /// <summary>
@@ -254,49 +266,33 @@ namespace DepthGuess
             //ここでProcess関数を呼び出します。
             //並列処理がわからない場合は変更しないでください。
             //また、デバッグモードとリリースモードで例外処理を変更しています。
-            #region プロセス実行
-#if DEBUG
-            //プロセスが実行中か確認
-            if (processThread != null && processThread.IsAlive)
-            {
-                //実行中だった
-                MessageBox.Show("処理が終了していません", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-            else
-            {
-                //新しいプロセスの発行
-                processThread = new Thread(new ThreadStart(Process));
-                processThread.IsBackground = true;
-                processThread.Start();
-            }
-#else
-            //例外処理を行う
-            try
-            {
-                //プロセスが実行中か確認
-                if (processThread != null && processThread.IsAlive)
-                {
-                    //実行中だった
-                    MessageBox.Show("処理が終了していません", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                }
-                else
-                {
-                    //新しいプロセスの発行
-                    processThread = new Thread(new ThreadStart(Process));
-                    processThread.IsBackground = true;
-                    processThread.Start();
-                }
-            }
-            catch (Exception ex)
-            {
-                //例外の内容をログで表示
-                logWriter.WriteError("エラーが発生しました");
-                logWriter.WriteError(ex.ToString());
-                logWriter.WriteError("処理を停止します");
-            }
-#endif
-            #endregion
 
+            #region
+            if (tokenSource == null)
+            {
+                tokenSource = new CancellationTokenSource();
+
+                ProcessAsync().ContinueWith(t =>
+                {
+                    tokenSource.Dispose();
+                    tokenSource = null;
+                    if (t.IsCanceled)
+                        logWriter.WriteError("処理を中止しました");
+
+#if DEBUG
+#else
+                    if (t.Exception!=null)
+                        logWriter.WriteError(t.Exception);
+#endif
+
+                    BeginInvoke(new Action(() =>
+                    {
+                        stopButton.Enabled = false;
+                        startButton.Enabled = true;
+                    }));
+                });
+            }
+            #endregion
         }
         /// <summary>
         /// 停止のボタンを押されたときに、実行される関数です
@@ -304,15 +300,8 @@ namespace DepthGuess
         private void StopButton_Click(object sender, EventArgs e)
         {
             //プロセスが実行中ならば終了させる。
-            if (processThread != null && processThread.IsAlive)
-                processThread.Abort();
-
-            logWriter.WriteError("処理を中止しました");
-
-            //停止ボタンを無効にします。
-            stopButton.Enabled = false;
-            //開始ボタンを有効にします。
-            startButton.Enabled = true;
+            if (tokenSource != null)
+                tokenSource.Cancel();
         }
 
         /// <summary>
@@ -339,22 +328,14 @@ namespace DepthGuess
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             //プロセスの状態を確認します。
-            if (processThread != null && processThread.IsAlive)
+            if (tokenSource != null)
             {
-                //確認を取ります。
-                var com = MessageBox.Show("処理が終了していません\n本当に終了しますか?", "警告", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
-                if (com == DialogResult.Cancel)
-                {
-                    //フォームが終了するのをキャンセルします。
-                    e.Cancel = true;
-                    return;
-                }
-                else
-                {
-                    //プロセスを終了します。
-                    processThread.Abort();
-                    closeFlag = true;
-                }
+                //警告を表示
+                MessageBox.Show("処理が終了していません", "警告", MessageBoxButtons.OK, MessageBoxIcon.Question);
+
+                //フォームが終了するのをキャンセルします。
+                e.Cancel = true;
+                return;
             }
             else if (!closeFlag)
             {

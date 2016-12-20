@@ -17,23 +17,19 @@ namespace DepthGuess
     /// </summary>
     class LAB
     {
-        private double l;
-        private double a;
-        private double b;
-
-        public double L { get { return l; } }
-        public double A { get { return a; } }
-        public double B { get { return b; } }
+        public double L { get; }
+        public double A { get; }
+        public double B { get; }
 
         private LAB(double _l, double _a, double _b)
         {
-            l = _l;
-            a = _a;
-            b = _b;
+            L = _l;
+            A = _a;
+            B = _b;
         }
         public override string ToString()
         {
-            return "L*a*b*[L*=" + l.ToString() + ", a*=" + a.ToString() + ", b*=" + b.ToString() + "]";
+            return "L*a*b*[L*=" + L.ToString() + ", a*=" + A.ToString() + ", b*=" + B.ToString() + "]";
         }
 
         public static LAB FromLAB(double _l, double _a, double _b)
@@ -80,9 +76,9 @@ namespace DepthGuess
         }
         public static Color ToRGB(LAB c)
         {
-            double y = (c.l + 16) / 116;
-            double x = c.a / 500 + y;
-            double z = y - c.b / 200;
+            double y = (c.L + 16) / 116;
+            double x = c.A / 500 + y;
+            double z = y - c.B / 200;
 
             double Xn = 98.072;
             double Yn = 100.000;
