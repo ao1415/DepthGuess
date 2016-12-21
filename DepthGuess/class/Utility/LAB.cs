@@ -1,45 +1,70 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 /*
- * 色をL*a*b*で表現するためのクラスが定義されています。
- * ColorとL*a*b*を相互に変換できます。
+ * 色をL*a*b*で表現するためのクラスが定義されています
+ * ColorとL*a*b*を相互に変換できます
  */
 
 namespace DepthGuess
 {
     /// <summary>
-    /// L*a*b*(明度、色度、色度)カラーを表します。
+    /// L*a*b*(明度、色度、色度)カラーを表します
     /// </summary>
     class LAB
     {
+        /// <summary>
+        /// 明度
+        /// </summary>
         public double L { get; }
+        /// <summary>
+        /// 色度
+        /// </summary>
         public double A { get; }
+        /// <summary>
+        /// 色度
+        /// </summary>
         public double B { get; }
 
+        /// <summary>コンストラクタ</summary>
+        /// <param name="_l">明度</param>
+        /// <param name="_a">色度</param>
+        /// <param name="_b">色度</param>
         private LAB(double _l, double _a, double _b)
         {
             L = _l;
             A = _a;
             B = _b;
         }
+
+        /// <summary>文字列に変換します</summary>
+        /// <returns>文字列<see cref="string"/></returns>
         public override string ToString()
         {
             return "L*a*b*[L*=" + L.ToString() + ", a*=" + A.ToString() + ", b*=" + B.ToString() + "]";
         }
 
+        /// <summary>LABクラスを作成する</summary>
+        /// <param name="_l">明度</param>
+        /// <param name="_a">色度</param>
+        /// <param name="_b">色度</param>
+        /// <returns>L*a*b*の色<see cref="LAB"/></returns>
         public static LAB FromLAB(double _l, double _a, double _b)
         {
             return new LAB(_l, _a, _b);
         }
+        /// <summary>LABクラスを作成する</summary>
+        /// <param name="c">色</param>
+        /// <returns>L*a*b*の色<see cref="LAB"/></returns>
         public static LAB FromRGB(Color c)
         {
             return FromRGB(c.R, c.G, c.B);
         }
+        /// <summary>LABクラスを作成する</summary>
+        /// <param name="_r">赤色</param>
+        /// <param name="_g">緑色</param>
+        /// <param name="_b">青色</param>
+        /// <returns>L*a*b*の色<see cref="LAB"/></returns>
         public static LAB FromRGB(byte _r, byte _g, byte _b)
         {
             double r = _r / 255.0;
@@ -74,6 +99,9 @@ namespace DepthGuess
 
             return new LAB(lab[0], lab[1], lab[2]);
         }
+        /// <summary>Colorクラスを作成する</summary>
+        /// <param name="c">色</param>
+        /// <returns>RGBの色<see cref="Color"/></returns>
         public static Color ToRGB(LAB c)
         {
             double y = (c.L + 16) / 116;

@@ -7,8 +7,8 @@ using System.Threading;
 using System.Threading.Tasks;
 
 /*
- * ラベル領域の内包関係を調べるクラスが定義されています。
- * GetInclusionLinkでn番目の領域が内包している領域の情報を得られます。
+ * ラベル領域の内包関係を調べるクラスが定義されています
+ * GetInclusionLinkでn番目の領域が内包している領域の情報を得られます
  * [0][1]=3ならば、0番の領域が3の領域を内包している
  */
 
@@ -68,15 +68,11 @@ namespace DepthGuess
             {
                 Parallel.For(label.Min, label.Max + 1, (n, state) =>
                 {
-                    if (token.IsCancellationRequested)
-                    {
-                        pw.Close();
-                        state.Break();
-                    }
+                    if (token.IsCancellationRequested) state.Break();
                     link[n - label.Min] = GetInclusionNumber(label, n);
                     pw.Add();
                 });
-
+                pw.Close();
                 pw.Join();
             }
 

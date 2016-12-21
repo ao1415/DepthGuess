@@ -1,50 +1,52 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 /*
- * 色をHSVで表現するためのクラスが定義されています。
- * ColorとHSVを相互に変換できます。
+ * 色をHSVで表現するためのクラスが定義されています
+ * ColorとHSVを相互に変換できます
  */
 
 namespace DepthGuess
 {
     /// <summary>
-    /// HSV(色相、彩度、明度)カラーを表します。
+    /// HSV(色相、彩度、明度)カラーを表します
     /// </summary>
     class HSV
     {
         /// <summary>
-        /// <para>色相</para>
-        /// <para>0～360</para>
+        /// 色相
         /// </summary>
-        private double h;
+        public double H { get; }
         /// <summary>
-        /// <para>彩度</para>
-        /// <para>0～1</para>
+        /// 彩度
         /// </summary>
-        private double s;
+        public double S { get; }
         /// <summary>
-        /// <para>明度</para>
-        /// <para>0～1</para>
+        /// 明度
         /// </summary>
-        private double v;
+        public double V { get; }
 
-        /// <summary>色相</summary>
-        public double H { get { return h; } }
-        /// <summary>彩度</summary>
-        public double S { get { return s; } }
-        /// <summary>明度</summary>
-        public double V { get { return v; } }
-
-        private HSV(double _h, double _s, double _v)
+        /// <summary>コンストラクタ</summary>
+        /// <param name="h">色相</param>
+        /// <param name="s">彩度</param>
+        /// <param name="v">明度</param>
+        private HSV(double h, double s, double v)
         {
-            Set(_h, _s, _v);
+            H = RoundDegree(h);
+            S = Math.Max(0, Math.Min(1, s));
+            V = Math.Max(0, Math.Min(1, v));
         }
 
+        /// <summary>文字列に変換します</summary>
+        /// <returns>文字列<see cref="string"/></returns>
+        public override string ToString()
+        {
+            return "HSV[H=" + H.ToString() + ", S=" + S.ToString() + ", V=" + V.ToString() + "]";
+        }
+
+        /// <summary>色相を一定値におさめる</summary>
+        /// <param name="x">色相</param>
+        /// <returns>0～360に収まった値<see cref="double"/></returns>
         private double RoundDegree(double x)
         {
             if (x >= 0)
@@ -53,21 +55,29 @@ namespace DepthGuess
                 return 360 - (-x % 360);
         }
 
-        private void Set(double _h, double _s, double _v)
+        /// <summary>HSVクラスを作成する</summary>
+        /// <param name="h">色相</param>
+        /// <param name="s">彩度</param>
+        /// <param name="v">明度</param>
+        /// <returns>HSVの色<see cref="HSV"/></returns>
+        public static HSV FromHSV(double h, double s, double v)
         {
-            h = RoundDegree(_h);
-            s = Math.Max(0, Math.Min(1, _s));
-            v = Math.Max(0, Math.Min(1, _v));
+            return new HSV(h, s, v);
         }
 
-        public static HSV FromHSV(double _h, double _s, double _v)
-        {
-            return new HSV(_h, _s, _v);
-        }
+        /// <summary>HSVクラスを作成する</summary>
+        /// <param name="c">色</param>
+        /// <returns>HSVの色<see cref="HSV"/></returns>
         public static HSV FromRGB(Color c)
         {
             return FromRGB(c.R, c.G, c.B);
         }
+
+        /// <summary>HSVクラスを作成する</summary>
+        /// <param name="_r">赤色</param>
+        /// <param name="_g">緑色</param>
+        /// <param name="_b">青色</param>
+        /// <returns>HSVの色<see cref="HSV"/></returns>
         public static HSV FromRGB(byte _r, byte _g, byte _b)
         {
             double r = _r / 255.0;
@@ -101,6 +111,10 @@ namespace DepthGuess
 
             return new HSV(h, s, v);
         }
+
+        /// <summary>Colorクラスを作成する</summary>
+        /// <param name="c">色</param>
+        /// <returns>RGBの色<see cref="Color"/></returns>
         public static Color ToRGB(HSV c)
         {
             double v = c.V;
@@ -155,7 +169,7 @@ namespace DepthGuess
                         b = q;
                         break;
                     default:
-                        throw new ArgumentException("色相の値が不正です。", "HSV");
+                        throw new ArgumentException("色相の値が不正です", "HSV");
                 }
             }
             return Color.FromArgb((int)Math.Round(r * 255f), (int)Math.Round(g * 255f), (int)Math.Round(b * 255f));

@@ -54,7 +54,7 @@ namespace DepthGuess
             return depthGrid;
         }
 
-        public LabelStructure GetDepth(LabelStructure label, CancellationTokenSource token)
+        private LabelStructure GetDepth(LabelStructure label, CancellationTokenSource token)
         {
             logWriter.Write("深さ推測を行います");
 
@@ -92,5 +92,6 @@ namespace DepthGuess
             logWriter.Write("深さ推測を行いました");
             return depthGrid;
         }
+        public async Task<LabelStructure> GetDepthAsync(LabelStructure label, CancellationTokenSource token) { return await Task.Run(() => GetDepth(label, token)); }
     }
 }

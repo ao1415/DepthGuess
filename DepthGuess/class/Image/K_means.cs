@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media.Media3D;
@@ -194,7 +192,7 @@ namespace DepthGuess
             return bitmap;
         }
 
-        public Bitmap GetImage(Bitmap bmp, CancellationTokenSource token)
+        private Bitmap GetImage(Bitmap bmp, CancellationTokenSource token)
         {
             logWriter.Write("k-means法を開始します");
 
@@ -237,6 +235,7 @@ namespace DepthGuess
 
             return bitmap;
         }
+        public async Task<Bitmap> GetImageAsync(Bitmap bmp, CancellationTokenSource token) { return await Task.Run(() => GetImage(bmp, token)); }
 
     }
 }

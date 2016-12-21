@@ -2,17 +2,29 @@
 using System.Threading;
 using System.Windows.Forms;
 
+/*
+ * 処理の経過を表示するウィンドウを作成するクラスが定義されています
+ * Addでカウントアップできます
+ */
+
 namespace DepthGuess
 {
+    /// <summary>
+    /// 処理の経過を表示する
+    /// </summary>
     class PrograssWindow : IDisposable
     {
         private Thread thread;
         private PrograssForm form;
 
+        /// <summary>コンストラクタ</summary>
+        /// <param name="text">ウィンドウのタイトル</param>
+        /// <param name="max">カウントの最大値</param>
         public PrograssWindow(string text, int max)
         {
             form = new PrograssForm(text, max);
 
+            //PrograssFormを別スレッドで立ち上げる
             thread = new Thread(new ParameterizedThreadStart((object data) =>
             {
                 Application.EnableVisualStyles();
@@ -24,18 +36,27 @@ namespace DepthGuess
 
         }
 
+        /// <summary>
+        /// カウンタを+1する
+        /// </summary>
         public void Add()
         {
             if (!form.IsDisposed)
                 form.BeginInvoke(new Action(() =>{form.Add();}));
         }
 
+        /// <summary>
+        /// ウィンドウを閉じる
+        /// </summary>
         public void Close()
         {
             if (!form.IsDisposed)
                 form.BeginInvoke(new Action(() => { form.Close(); }));
         }
 
+        /// <summary>
+        /// ウィンドウの終了を待つ
+        /// </summary>
         public void Join()
         {
             thread.Join();
@@ -47,6 +68,9 @@ namespace DepthGuess
             Dispose(false);
         }
 
+        /// <summary>
+        /// このクラスを破棄する
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
@@ -61,8 +85,8 @@ namespace DepthGuess
                 {
                     if (thread.IsAlive)
                     {
-                        form.BeginInvoke(new Action(() => { form.Close(); }));
-                        thread.Join();
+                        Close();
+                        Join();
                     }
                 }
                 disposed = true;

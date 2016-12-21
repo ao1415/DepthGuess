@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 /*
  * ラベルの情報を管理するクラスが定義されています。
@@ -14,7 +10,9 @@ using System.Threading.Tasks;
 
 namespace DepthGuess
 {
-    /// <summary>ラベル情報を管理するクラス</summary>
+    /// <summary>
+    /// ラベル情報を管理するクラス
+    /// </summary>
     class LabelStructure
     {
 
@@ -22,6 +20,8 @@ namespace DepthGuess
         private int max;
         private int min;
 
+        /// <summary>コンストラクタ</summary>
+        /// <param name="_label">ラベル情報の2次配列</param>
         public LabelStructure(int[,] _label)
         {
             label = _label;
@@ -31,7 +31,10 @@ namespace DepthGuess
 
             SetMinMax();
         }
-        public LabelStructure(int w,int h)
+        /// <summary>コンストラクタ</summary>
+        /// <param name="w">横幅</param>
+        /// <param name="h">縦幅</param>
+        public LabelStructure(int w, int h)
         {
             label = new int[h, w];
             max = min = 0;
@@ -39,6 +42,9 @@ namespace DepthGuess
             Height = h;
         }
 
+        /// <summary>
+        /// 最大値・最小値をセットしなおす
+        /// </summary>
         public void SetMinMax()
         {
             max = int.MinValue;
@@ -54,6 +60,9 @@ namespace DepthGuess
             }
         }
 
+        /// <summary>ラベルにアクセスします</summary>
+        /// <param name="y">Y座標</param>
+        /// <param name="x">X座標</param>
         public int this[int y, int x]
         {
             set { label[y, x] = value; }
@@ -63,10 +72,18 @@ namespace DepthGuess
         public int Max { get { return max; } }
         public int Min { get { return min; } }
 
+        /// <summary>
+        /// ラベルの横幅
+        /// </summary>
         public int Width { get; }
+        /// <summary>
+        /// ラベルの縦幅
+        /// </summary>
         public int Height { get; }
 
-        /// <summary>ラベルの2次配列を取得します</summary>
+        /// <summary>
+        /// ラベルの2次配列を取得します
+        /// </summary>
         public int[,] Label { get { return label; } }
 
     }

@@ -2,24 +2,24 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 /*
- * 画像から、領域ごとに分割し、マッピングするクラスが定義されています。
- * GetLabelTableで通常のラベリング処理を行えます。
+ * 画像から、領域ごとに分割し、マッピングするクラスが定義されています
+ * GetLabelTableで通常のラベリング処理を行えます
  */
 
 namespace DepthGuess
 {
-    /// <summary>画像のラベルを作成する</summary>
+    /// <summary>
+    /// 画像のラベルを作成する
+    /// </summary>
     class Labeling
     {
-        LogWriter logWriter;
+        private LogWriter logWriter;
 
         /// <summary>コンストラクタ</summary>
         /// <param name="writer"><see cref="LogWriter"/></param>
@@ -152,7 +152,7 @@ namespace DepthGuess
         /// <param name="bmp">ラベルを作成したい画像</param>
         /// <param name="token">中断用構造体</param>
         /// <returns>ラベル情報<see cref="LabelStructure" /></returns>
-        public LabelStructure GetLabelTable(Bitmap bmp, CancellationTokenSource token)
+        private LabelStructure GetLabelTable(Bitmap bmp, CancellationTokenSource token)
         {
             logWriter.Write("ラベリング処理を行います");
 
@@ -270,31 +270,19 @@ namespace DepthGuess
             logWriter.Write("ラベリング処理が完了しました");
             return new LabelStructure(labelTable);
         }
-
-        /// <summary>画像からラベル情報を視覚化した画像を作成する</summary>
-        /// <param name="bmp">視覚化したい画像</param>
-        /// <returns>視覚化された画像<see cref="Bitmap"></returns>
-        public Bitmap GetLabelImage(Bitmap bmp)
+        /// <summary>画像からラベルを作成する(非同期)</summary>
+        /// <param name="bmp">ラベルを作成したい画像</param>
+        /// <param name="token">中断用構造体</param>
+        /// <returns>ラベル情報<see cref="LabelStructure" /></returns>
+        public async Task<LabelStructure> GetLabelTableAsync(Bitmap bmp, CancellationTokenSource token)
         {
-            var label = GetLabelTable(bmp);
-
-            logWriter.Write("ラベルデータの画像作成を行います");
-
-            if (label == null)
-            {
-                logWriter.WriteError("ラベルデータが存在しません");
-                logWriter.WriteError("画像作成を中止します");
-                return null;
-            }
-
-            Bitmap bitmap = GetLabelImage(label);
-
-            return bitmap;
+            return await Task.Run(() => GetLabelTable(bmp, token));
         }
+
         /// <summary>ラベル情報を視覚化する</summary>
         /// <param name="label">視覚化したいラベルデータ</param>
         /// <returns>視覚化された画像<see cref="Bitmap"></returns>
-        public Bitmap GetLabelImage(LabelStructure label)
+        private Bitmap GetLabelImage(LabelStructure label)
         {
             logWriter.Write("ラベルデータの画像作成を行います");
 
@@ -335,6 +323,34 @@ namespace DepthGuess
             }
 
             logWriter.Write("ラベルデータの画像作成が完了しました");
+
+            return bitmap;
+        }
+        /// <summary>ラベル情報を視覚化する(非同期)</summary>
+        /// <param name="label">視覚化したいラベルデータ</param>
+        /// <returns>視覚化された画像<see cref="Bitmap"></returns>
+        public async Task<Bitmap> GetLabelImageAsync(LabelStructure label)
+        {
+            return await Task.Run(() => GetLabelImage(label));
+        }
+
+        /// <summary>画像からラベル情報を視覚化した画像を作成する</summary>
+        /// <param name="bmp">視覚化したい画像</param>
+        /// <returns>視覚化された画像<see cref="Bitmap"></returns>
+        private Bitmap GetLabelImage(Bitmap bmp)
+        {
+            var label = GetLabelTable(bmp);
+
+            logWriter.Write("ラベルデータの画像作成を行います");
+
+            if (label == null)
+            {
+                logWriter.WriteError("ラベルデータが存在しません");
+                logWriter.WriteError("画像作成を中止します");
+                return null;
+            }
+
+            Bitmap bitmap = GetLabelImage(label);
 
             return bitmap;
         }

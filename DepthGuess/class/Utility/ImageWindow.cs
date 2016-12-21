@@ -1,22 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 
 /*
- * 画像を表示するウインドウを作成するクラスが定義されています。
- * コンストラクタを呼び出すことで、新しくウインドウを作成します。
+ * 画像を表示するウインドウを作成するクラスが定義されています
+ * コンストラクタを呼び出すことで、新しくウインドウを作成します
  * ウインドウを右クリックすることで、
  * ウインドウサイズを画像に合わせる
  * 画像を保存する
- * が選択できます。
+ * が選択できます
  */
 
 namespace DepthGuess
 {
-    /// <summary>画像を表示するウインドウ</summary>
+    /// <summary>
+    /// 画像を表示するウインドウ
+    /// </summary>
     class ImageWindow
     {
         private LogWriter logWriter;
@@ -38,7 +39,7 @@ namespace DepthGuess
             }
 
             logWriter.Write(text + "を表示しました");
-            
+
             PictureForm form = new PictureForm((string)text.Clone(), (Image)image.Clone(), logWriter);
 
             //別スレッドで表示を行う
@@ -53,26 +54,50 @@ namespace DepthGuess
 
         }
 
-        ///<summary>画像を表示するためのフォーム</summary>
+        ///<summary>
+        ///画像を表示するためのフォーム
+        ///</summary>
         private class PictureForm : Form
         {
 
             private LogWriter logWriter;
+
+            /// <summary>コンストラクタ</summary>
+            /// <param name="text">ウィンドウのタイトル</param>
+            /// <param name="image">表示する画像</param>
+            /// <param name="writer">ログを書き出すクラス</param>
             public PictureForm(string text, Image image, LogWriter writer)
             {
                 InitializeComponent(text, image);
                 logWriter = writer;
+
+                saveItem.Click += new EventHandler((object sender, EventArgs e) =>
+                {
+                    if (dialog.ShowDialog() == DialogResult.OK)
+                    {
+                        string path = dialog.FileName;
+                        SaveImage saveImage = new SaveImage(logWriter);
+                        saveImage.Save(img, path);
+                    }
+                });
+
+                sizeItem.Click += new EventHandler((object sender, EventArgs e) =>
+                {
+                    ClientSize = img.Size;
+                });
+
+                Config.StyleSetup(this);
             }
 
             /// <summary>
-            /// 必要なデザイナー変数です。
+            /// 必要なデザイナー変数です
             /// </summary>
             private IContainer components = null;
 
             /// <summary>
-            /// 使用中のリソースをすべてクリーンアップします。
+            /// 使用中のリソースをすべてクリーンアップします
             /// </summary>
-            /// <param name="disposing">マネージ リソースを破棄する場合は true を指定し、その他の場合は false を指定します。</param>
+            /// <param name="disposing">マネージ リソースを破棄する場合は true を指定し、その他の場合は false を指定します</param>
             protected override void Dispose(bool disposing)
             {
                 if (disposing && (components != null))
@@ -83,8 +108,8 @@ namespace DepthGuess
             }
 
             /// <summary>
-            /// デザイナー サポートに必要なメソッドです。このメソッドの内容を
-            /// コード エディターで変更しないでください。
+            /// デザイナー サポートに必要なメソッドですこのメソッドの内容を
+            /// コード エディターで変更しないでください
             /// </summary>
             private void InitializeComponent(string text, Image image)
             {
@@ -102,23 +127,10 @@ namespace DepthGuess
                 saveItem.Name = "saveImageMenuItem";
                 saveItem.Size = new Size(108, 22);
                 saveItem.Text = "名前を付けて保存...";
-                saveItem.Click += new EventHandler((object sender, EventArgs e) =>
-                {
-                    if (dialog.ShowDialog() == DialogResult.OK)
-                    {
-                        string path = dialog.FileName;
-                        SaveImage saveImage = new SaveImage(logWriter);
-                        saveImage.Save(img, path);
-                    }
-                });
 
                 sizeItem.Name = "resizeImageMenuItem";
                 sizeItem.Size = new Size(108, 22);
                 sizeItem.Text = "元の大きさに戻す";
-                sizeItem.Click += new EventHandler((object sender, EventArgs e) =>
-                {
-                    ClientSize = img.Size;
-                });
 
 
                 SuspendLayout();
@@ -144,10 +156,6 @@ namespace DepthGuess
                 ContextMenuStrip = menu;
                 Name = "ImageForm";
                 Text = text;
-
-#if BLACK_STYLE
-                BackColor = Color.FromArgb(30, 30, 30);
-#endif
 
                 ((ISupportInitialize)(pictureBox)).EndInit();
                 menu.ResumeLayout(false);

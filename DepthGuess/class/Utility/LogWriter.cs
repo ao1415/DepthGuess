@@ -4,14 +4,16 @@ using System.Drawing;
 using System.Windows.Forms;
 
 /*
- * ログを書き出すクラスが定義されています。
- * Writeを呼び出すことでログが一行追加されます。
- * WriteErrorでエラーログが書き出せます。
+ * ログを書き出すクラスが定義されています
+ * Writeを呼び出すことでログが一行追加されます
+ * WriteErrorでエラーログが書き出せます
  */
 
 namespace DepthGuess
 {
-    /// <summary>ログを書き出すクラス</summary>
+    /// <summary>
+    /// ログを書き出すクラス
+    /// </summary>
     class LogWriter
     {
         public RichTextBox LogTextBox { get; }
@@ -60,7 +62,9 @@ namespace DepthGuess
             LogTextBox.Refresh();
         }
 
-        /// <summary>最後の一行を削除する</summary>
+        /// <summary>
+        /// 最後の一行を削除する
+        /// </summary>
         public void RemoveLine()
         {
             MainForm.BeginInvoke(new Action(() =>
@@ -74,7 +78,9 @@ namespace DepthGuess
             }));
         }
 
-        /// <summary>現在の時間を取得</summary>
+        /// <summary>
+        /// 現在の時間を取得
+        /// </summary>
         private string GetNow()
         {
             string now = DateTime.Now.ToString("[HH:mm:ss.");
@@ -83,13 +89,17 @@ namespace DepthGuess
             return now;
         }
 
-        /// <summary>テキストボックスの文字列を全削除する</summary>
+        /// <summary>
+        /// テキストボックスの文字列を全削除する
+        /// </summary>
         public void Clear()
         {
             MainForm.BeginInvoke(new Action(() => { LogTextBox.Clear(); }));
         }
 
-        /// <summary>テキストボックスを強制的に再描写する</summary>
+        /// <summary>
+        /// テキストボックスを強制的に再描写する
+        /// </summary>
         public void Refresh()
         {
             MainForm.BeginInvoke(new Action(() => { LogTextBox.Refresh(); }));

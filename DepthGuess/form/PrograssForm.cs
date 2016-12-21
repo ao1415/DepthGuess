@@ -1,25 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using System.Windows.Forms;
+
+/*
+ * PrograssFormの動作を作成する場所です
+ * ここで、プログレスバーの動作を指定しています
+ */
 
 namespace DepthGuess
 {
+    /// <summary>
+    /// プログレスバーの表示を行うクラス
+    /// </summary>
     public partial class PrograssForm : Form
     {
+        /// <summary>コンストラクタ</summary>
+        /// <param name="text">ウインドウのタイトル</param>
+        /// <param name="max">カウンタの最大値</param>
         public PrograssForm(string text, int max)
         {
+            //Visual Studioが自動生成したコードの初期化
+            //編集しないこと
             InitializeComponent();
 
-#if BLACK_STYLE
-            StyleSetup();
-#endif
+            Config.StyleSetup(this);
 
             Text = text;
 
@@ -29,50 +32,20 @@ namespace DepthGuess
             label.Text = progressBar.Value.ToString() + "/" + progressBar.Maximum.ToString();
         }
 
+        /// <summary>
+        /// カウンタを+1する
+        /// </summary>
         public void Add()
         {
+            //カウントアップ
             progressBar.Value++;
 
+            //ラベルテキスト更新
             label.Text = progressBar.Value.ToString() + "/" + progressBar.Maximum.ToString();
+            //ラベルの表示の更新
             label.Update();
 
-            if (progressBar.Value >= progressBar.Maximum)
-                Close();
         }
-
-        /// <summary>
-        /// フォームのデザインを黒基調に変更します。
-        /// </summary>
-        private void StyleSetup()
-        {
-            BackColor = Color.FromArgb(30, 30, 30);
-            ForeColor = SystemColors.Window;
-
-            //MainFormのすべてのコントロールを列挙する
-            foreach (var control in Controls)
-            {
-                //コントロールのタイプを取得
-                //タイプで、どのコントロールか判別する
-                var type = control.GetType();
-
-                //各種設定
-                if (type == typeof(Label))
-                {
-                    Label l = (Label)control;
-                    l.BackColor = Color.FromArgb(30, 30, 30);
-                    l.ForeColor = Color.FromArgb(220, 220, 220);
-                    l.Font = new Font("ＭＳ ゴシック", 9);
-                }
-                else if (type == typeof(ProgressBar))
-                {
-                    ProgressBar pbar = (ProgressBar)control;
-                    pbar.BackColor = Color.FromArgb(30, 30, 30);
-                    pbar.ForeColor = Color.FromArgb(220, 220, 220);
-                }
-
-            }
-
-        }
-
+        
     }
 }
