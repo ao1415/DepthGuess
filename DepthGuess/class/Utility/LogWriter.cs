@@ -14,7 +14,7 @@ namespace DepthGuess
     /// <summary>
     /// ログを書き出すクラス
     /// </summary>
-    class LogWriter
+    public class LogWriter
     {
         public RichTextBox LogTextBox { get; }
         public Form MainForm { get; }
