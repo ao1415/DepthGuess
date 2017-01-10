@@ -62,6 +62,7 @@ namespace DepthGuess
                 return null;
             }
 
+            label.SetMinMax();
             int[][] link = new int[label.Max - label.Min + 1][];
 
             using (PrograssWindow pw = new PrograssWindow("内包検査", label.Max - label.Min + 1))
@@ -72,8 +73,6 @@ namespace DepthGuess
                     link[n - label.Min] = GetInclusionNumber(label, n);
                     pw.Add();
                 });
-                pw.Close();
-                pw.Join();
             }
 
             logWriter.Write("ラベルの内包関係を調べました");
@@ -140,6 +139,27 @@ namespace DepthGuess
             }
 
             return inclusion.ToArray();
+        }
+
+        private int[] GetInclusionNumber2(LabelStructure label, int n)
+        {
+            Dictionary<int, int> table = new Dictionary<int, int>();
+            
+            for (int y = 0; y < label.Height; y++)
+            {
+                for (int x = 0; x < label.Width; x++)
+                {
+                    if (label[y, x] != n)
+                    {
+                        if (y > 0 && label[y - 1, x] != n)
+                            table[label[y, x]] = label[y - 1, x];
+                        if (x > 0 && label[y, x - 1] != n)
+                            table[label[y, x]] = label[y, x - 1];
+                    }
+                }
+            }
+
+            return null;
         }
 
         private bool IsRing(LabelStructure label, int n)

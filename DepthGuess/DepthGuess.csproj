@@ -112,11 +112,11 @@
     <Compile Include="Class\Image\Labeling.cs" />
     <Compile Include="Class\Image\MedianFilter.cs" />
     <Compile Include="Class\Image\RingDetection.cs" />
-    <Compile Include="Class\Image\SaveImage.cs" />
+    <Compile Include="Class\Utility\SaveImage.cs" />
     <Compile Include="Class\Image\SobelFilter.cs" />
     <Compile Include="Class\Utility\HSV.cs" />
     <Compile Include="Class\Utility\ImageWindow.cs" />
-    <Compile Include="Class\Image\LoadImage.cs" />
+    <Compile Include="Class\Utility\LoadImage.cs" />
     <Compile Include="Class\Utility\LabelStructure.cs" />
     <Compile Include="Class\Utility\LAB.cs" />
     <Compile Include="Class\Utility\LogWriter.cs" />
