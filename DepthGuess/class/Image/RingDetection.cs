@@ -70,7 +70,8 @@ namespace DepthGuess
                 Parallel.For(label.Min, label.Max + 1, (n, state) =>
                 {
                     if (token.IsCancellationRequested) state.Break();
-                    link[n - label.Min] = GetInclusionNumber(label, n);
+                    //link[n - label.Min] = GetInclusionNumber(label, n);
+                    link[n - label.Min] = GetInclusionNumber2(label, n);
                     pw.Add();
                 });
             }
@@ -143,23 +144,56 @@ namespace DepthGuess
 
         private int[] GetInclusionNumber2(LabelStructure label, int n)
         {
-            Dictionary<int, int> table = new Dictionary<int, int>();
-            
+            Dictionary<int, bool> table = new Dictionary<int, bool>();
+
+            for (int i = label.Min; i <= label.Max; i++)
+                table[i] = false;
+
+            for (int x = 0; x < label.Width; x++)
+            {
+                if (label[0, x] != n)
+                    table[label[0, x]] = true;
+                if (label[label.Height - 1, x] != n)
+                    table[label[label.Height - 1, x]] = true;
+            }
             for (int y = 0; y < label.Height; y++)
             {
-                for (int x = 0; x < label.Width; x++)
+                if (label[y, 0] != n)
+                    table[label[y, 0]] = true;
+                if (label[y, label.Width - 1] != n)
+                    table[label[y, label.Width - 1]] = true;
+            }
+
+            for (int y = 1; y < label.Height - 1; y++)
+            {
+                for (int x = 1; x < label.Width - 1; x++)
                 {
-                    if (label[y, x] != n)
+                    if (label[y, x] != n && !table[label[y, x]])
                     {
-                        if (y > 0 && label[y - 1, x] != n)
-                            table[label[y, x]] = label[y - 1, x];
-                        if (x > 0 && label[y, x - 1] != n)
-                            table[label[y, x]] = label[y, x - 1];
+                        foreach (var d in Config.Direction)
+                        {
+                            int num = label[y + d.Y, x + d.X];
+
+                            if (table[num])
+                            {
+                                table[label[y, x]] = true;
+                                break;
+                            }
+                        }
                     }
                 }
             }
 
-            return null;
+            List<int> list = new List<int>();
+            table[n] = true;
+
+            foreach (var val in table)
+            {
+                if (!val.Value)
+                    list.Add(val.Key);
+            }
+
+            return list.ToArray();
         }
 
         private bool IsRing(LabelStructure label, int n)
