@@ -165,13 +165,16 @@ namespace DepthGuess
 
             LabelStructure label = new LabelStructure(bmp.Width, bmp.Height);
 
+            #region カラー配列の作成
             BitmapData data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
             byte[] buf = new byte[bmp.Width * bmp.Height * 4];
             Marshal.Copy(data.Scan0, buf, 0, buf.Length);
             bmp.UnlockBits(data);
+            #endregion
 
             Func<int, int, int> ToIndex = (x, y) => { return y * bmp.Width * 4 + x * 4; };
 
+            #region 番号振り分け
             Func<int, int, int> SearchLabel = (x, y) =>
                {
                    int max = 0;
@@ -204,7 +207,9 @@ namespace DepthGuess
                         label[y, x] = num;
                 }
             }
+            #endregion
 
+            #region 番号テーブルの作成
             int[] table = new int[count + 1];
             for (int i = 0; i < table.Length; i++) table[i] = i;
 
@@ -244,7 +249,9 @@ namespace DepthGuess
                     }
                 }
             }
+            #endregion
 
+            #region 番号の最適化
             int newCount = 0;
             for (int i = 0; i < table.Length; i++)
             {
@@ -265,6 +272,7 @@ namespace DepthGuess
                     label[y, x] = table[label[y, x]];
                 }
             }
+            #endregion
 
             logWriter.Write("ラベリング処理が完了しました");
             return label;

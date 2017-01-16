@@ -67,19 +67,28 @@ namespace DepthGuess
 
             using (PrograssWindow pw = new PrograssWindow("内包検査", label.Max - label.Min + 1))
             {
+                //*
                 Parallel.For(label.Min, label.Max + 1, (n, state) =>
                 {
                     if (token.IsCancellationRequested) state.Break();
                     //link[n - label.Min] = GetInclusionNumber(label, n);
-                    link[n - label.Min] = GetInclusionNumber2(label, n);
+                    link[n - label.Min] = GetInclusionNumber3(label, n);
                     pw.Add();
                 });
+                /*/
+                for (int i = label.Min; i <= label.Max; i++)
+                {
+                    link[i - label.Min] = GetInclusionNumber3(label, i);
+                    pw.Add();
+                }
+                //*/
             }
 
             logWriter.Write("ラベルの内包関係を調べました");
             return link;
         }
 
+        //遅い・不正確
         private int[] GetInclusionNumber(LabelStructure label, int n)
         {
             int[] dx = new int[] { -1, 0, 1, -1 };
@@ -141,7 +150,7 @@ namespace DepthGuess
 
             return inclusion.ToArray();
         }
-
+        //早い・不正確
         private int[] GetInclusionNumber2(LabelStructure label, int n)
         {
             Dictionary<int, bool> table = new Dictionary<int, bool>();
@@ -191,6 +200,51 @@ namespace DepthGuess
             {
                 if (!val.Value)
                     list.Add(val.Key);
+            }
+
+            return list.ToArray();
+        }
+
+        private int[] GetInclusionNumber3(LabelStructure label, int n)
+        {
+            int[] table = new int[label.Max - label.Min + 1];
+            for (int i = 0; i < table.Length; i++) table[i] = i;
+
+            for (int y = 0; y < label.Height; y++)
+            {
+                for (int x = 0; x < label.Width; x++)
+                {
+                    if (label[y, x] != n)
+                    {
+                        int min = int.MaxValue;
+
+                        foreach (var d in Config.Direction)
+                        {
+                            if (0 <= x + d.X && x + d.X < label.Width && 0 <= y + d.Y && y + d.Y < label.Height)
+                            {
+                                if (label[y + d.Y, x + d.X] != n)
+                                    min = Math.Min(min, table[label[y + d.Y, x + d.X]]);
+                            }
+                        }
+
+                        if (table[label[y, x]] > min)
+                        {
+                            for (int i = 0; i < table.Length; i++)
+                                if (table[i] == table[label[y, x]])
+                                    table[i] = min;
+                            for (int i = 0; i < table.Length; i++)
+                                while (table[i] != table[table[i]])
+                                    table[i] = table[table[i]];
+                        }
+                    }
+                }
+            }
+            
+            List<int> list = new List<int>();
+            for (int i=0;i<table.Length;i++)
+            {
+                if (table[i] != 0 && i != n)
+                    list.Add(i);
             }
 
             return list.ToArray();

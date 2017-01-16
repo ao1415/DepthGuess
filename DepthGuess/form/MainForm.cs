@@ -107,7 +107,7 @@ namespace DepthGuess
             if (originalImage == null) return;
 
             new ImageWindow("元画像", originalImage, logWriter);
-            /*
+            
             Bitmap kmeansImage = await new K_means(8, logWriter).GetImageAsync(originalImage, tokenSource);
             token.ThrowIfCancellationRequested();
 
@@ -118,22 +118,21 @@ namespace DepthGuess
 
             new ImageWindow("メディアンフィルタ", medianImage, logWriter);
             token.ThrowIfCancellationRequested();
-            */
-            //LabelStructure label = await new Labeling(logWriter).GetLabelTableAsync(medianImage, tokenSource);
-            LabelStructure label = await new Labeling(logWriter).GetLabelTableAsync(originalImage, tokenSource);
+            
+            LabelStructure label = await new Labeling(logWriter).GetLabelTableAsync(medianImage, tokenSource);
             token.ThrowIfCancellationRequested();
 
             Bitmap labelImage = await new Labeling(logWriter).GetLabelImageAsync(label);
 
             new ImageWindow("ラベリング画像", labelImage, logWriter);
-            /*
+            
             LabelStructure depth = await new Guess01(logWriter).GetDepthAsync(label, tokenSource);
             token.ThrowIfCancellationRequested();
 
             Bitmap depthImage = await new Labeling(logWriter).GetLabelImageAsync(depth);
             new ImageWindow("深さ情報", depthImage, logWriter);
 
-            SaveImage(originalImage, depth);*/
+            SaveImage(originalImage, depth);
             logWriter.Write("処理が完了しました");
         }
 
