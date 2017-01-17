@@ -67,21 +67,12 @@ namespace DepthGuess
 
             using (PrograssWindow pw = new PrograssWindow("内包検査", label.Max - label.Min + 1))
             {
-                //*
                 Parallel.For(label.Min, label.Max + 1, (n, state) =>
                 {
                     if (token.IsCancellationRequested) state.Break();
-                    //link[n - label.Min] = GetInclusionNumber(label, n);
                     link[n - label.Min] = GetInclusionNumber3(label, n);
                     pw.Add();
                 });
-                /*/
-                for (int i = label.Min; i <= label.Max; i++)
-                {
-                    link[i - label.Min] = GetInclusionNumber3(label, i);
-                    pw.Add();
-                }
-                //*/
             }
 
             logWriter.Write("ラベルの内包関係を調べました");
@@ -204,7 +195,7 @@ namespace DepthGuess
 
             return list.ToArray();
         }
-
+        //遅い・正確
         private int[] GetInclusionNumber3(LabelStructure label, int n)
         {
             int[] table = new int[label.Max - label.Min + 1];
@@ -240,8 +231,22 @@ namespace DepthGuess
                 }
             }
             
+            for (int x = 0; x < label.Width; x++)
+            {
+                table[label[0, x]] = 0;
+                table[label[label.Height - 1, x]] = 0;
+            }
+            for (int y = 0; y < label.Height; y++)
+            {
+                table[label[y, 0]] = 0;
+                table[label[y, label.Width - 1]] = 0;
+            }
+            for (int i = 0; i < table.Length; i++)
+                while (table[i] != table[table[i]])
+                    table[i] = table[table[i]];
+            
             List<int> list = new List<int>();
-            for (int i=0;i<table.Length;i++)
+            for (int i = 0; i < table.Length; i++)
             {
                 if (table[i] != 0 && i != n)
                     list.Add(i);

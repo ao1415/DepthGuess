@@ -164,7 +164,7 @@ namespace DepthGuess
                     Marshal.Copy(buf, 0, data.Scan0, buf.Length);
                     bitmap.UnlockBits(data);
 
-                    string name = path + i.ToString() + ".png";
+                    string name = path + "_" + i.ToString() + ".png";
                     bitmap.Save(name);
                     logWriter.Write("path=" + name);
                 }
