@@ -9,7 +9,7 @@ using System.Windows.Forms;
  * MainFormの動作を作成する場所です
  * ここで、ボタンやテキストボックスの動作を指定しています
  * デバッグモードで実行する場合はなるべく、デバッグありで実行してください
- * (上に表示された開始ボタン or デバッグ->デバッグの開始 or F5)
+ * (上に表示されている開始ボタン or デバッグ->デバッグの開始 or F5)
  */
 
 
@@ -68,6 +68,9 @@ namespace DepthGuess
             }
         }
 
+        /// <summary>画像を保存します</summary>
+        /// <param name="image">画像</param>
+        /// <param name="depth">深さ</param>
         private void SaveImage(Bitmap image, LabelStructure depth)
         {
             DialogResult com = MessageBox.Show("3次元画像を保存しますか?", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
