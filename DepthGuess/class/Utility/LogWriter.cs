@@ -16,10 +16,15 @@ namespace DepthGuess
     /// </summary>
     public class LogWriter
     {
+        /// <summary>ログライタを取得する</summary>
+        /// <value>ログライタ</value>
         public RichTextBox LogTextBox { get; }
+        /// <summary>メインフォームを取得する</summary>
+        /// <value>メインフォーム</value>
         public Form MainForm { get; }
 
         /// <summary>コンストラクタ</summary>
+        /// <param name="mainForm">テキストボックスを所持しているフォーム</param>
         /// <param name="textBox">テキストボックス</param>
         public LogWriter(Form mainForm, RichTextBox textBox)
         {
@@ -104,7 +109,7 @@ namespace DepthGuess
         {
             MainForm.BeginInvoke(new Action(() => { LogTextBox.Refresh(); }));
         }
-        
+
     }
 
 }

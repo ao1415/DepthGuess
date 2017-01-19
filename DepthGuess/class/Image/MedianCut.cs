@@ -22,7 +22,8 @@ namespace DepthGuess
         private LogWriter logWriter;
 
         /// <summary>コンストラクタ</summary>
-        /// <param name="writer"><see cref="LogWriter"/></param>
+        /// <param name="colorNumber">減色数</param>
+        /// <param name="writer"><see cref="LogWriter" /></param>
         public MedianCut(uint colorNumber, LogWriter writer)
         {
             ColorNumber = colorNumber;
@@ -167,7 +168,7 @@ namespace DepthGuess
                             nearColor = c;
                         }
                     }
-                    
+
                     buf[index + 0] = nearColor.R;
                     buf[index + 1] = nearColor.G;
                     buf[index + 2] = nearColor.B;

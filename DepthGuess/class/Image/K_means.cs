@@ -9,18 +9,33 @@ using System.Windows.Media.Media3D;
 
 namespace DepthGuess
 {
+    /// <summary>
+    /// 画像を減色するクラス
+    /// </summary>
     class K_means
     {
         private LogWriter logWriter;
+
+        /// <summary>
+        /// 色の属性
+        /// </summary>
         private List<Point3D>[] colors;
+        /// <summary>
+        /// クラスタ
+        /// </summary>
         private Point3D[] center;
 
+        /// <summary>コンストラクタ</summary>
+        /// <param name="colorNum">減色数</param>
+        /// <param name="writer"><see cref="LogWriter"/></param>
         public K_means(int colorNum, LogWriter writer)
         {
             logWriter = writer;
             colors = new List<Point3D>[colorNum];
         }
 
+        /// <summary>クラスタの重心を求める</summary>
+        /// <returns>各クラスタの重心</returns>
         private Point3D[] GetAverage()
         {
             Point3D[] points = new Point3D[colors.Length];
@@ -45,6 +60,8 @@ namespace DepthGuess
             return points;
         }
 
+        /// <summary>色情報を入力する</summary>
+        /// <param name="buf">カラー配列</param>
         private void SetColor(byte[] buf)
         {
             Random rnd = new Random();
@@ -70,6 +87,8 @@ namespace DepthGuess
 
         }
 
+        /// <summary>色の属性の再配置</summary>
+        /// <param name="centroids">クラスタの重心</param>
         private void SetColor(Point3D[] centroids)
         {
             List<Point3D>[] colorLists = new List<Point3D>[colors.Length];
@@ -100,24 +119,23 @@ namespace DepthGuess
 
         }
 
+        /// <summary>色の距離を取得する</summary>
+        /// <param name="p1">色</param>
+        /// <param name="p2">色</param>
+        /// <returns>色の距離</returns>
         private double Range(Point3D p1, Point3D p2)
         {
-            //*
             double x = p1.X - p2.X;
             double y = p1.Y - p2.Y;
             double z = p1.Z - p2.Z;
-            /*/
-            HSV h1 = HSV.FromRGB((byte)p1.X, (byte)p1.Y, (byte)p1.Z);
-            HSV h2 = HSV.FromRGB((byte)p2.X, (byte)p2.Y, (byte)p2.Z);
-            double dx = Math.Abs(h1.H - h2.H);
-            double x = Math.Min(dx, 360 - dx);
-            double y = (h1.S - h2.S) * 180;
-            double z = (h1.V - h2.V) * 180;
-            //*/
+
             return x * x + y * y + z * z;
-            //return Math.Sqrt(x * x + y * y + z * z);
         }
 
+        /// <summary>クラスタの変化を返す</summary>
+        /// <param name="p1">直前のクラスタ</param>
+        /// <param name="p2">直後のクラスタ</param>
+        /// <returns>変化していなければtrue, それ以外はfalse</returns>
         private bool Diff(Point3D[] p1, Point3D[] p2)
         {
             double max = 0;
@@ -126,6 +144,8 @@ namespace DepthGuess
             return max < 1;
         }
 
+        /// <summary>カラー配列の置き換え</summary>
+        /// <param name="buf">カラー配列</param>
         private void Replace(byte[] buf)
         {
 
@@ -155,6 +175,9 @@ namespace DepthGuess
 
         }
 
+        /// <summary>減色した画像を得る</summary>
+        /// <param name="bmp">減色したい画像</param>
+        /// <returns>減色された画像</returns>
         public Bitmap GetImage(Bitmap bmp)
         {
             logWriter.Write("k-means法を開始します");
@@ -192,6 +215,10 @@ namespace DepthGuess
             return bitmap;
         }
 
+        /// <summary>減色した画像を得る</summary>
+        /// <param name="bmp">減色したい画像</param>
+        /// <param name="token">キャンセルトークン</param>
+        /// <returns>減色された画像</returns>
         private Bitmap GetImage(Bitmap bmp, CancellationTokenSource token)
         {
             logWriter.Write("k-means法を開始します");
@@ -235,6 +262,10 @@ namespace DepthGuess
 
             return bitmap;
         }
+        /// <summary>減色した画像を得る</summary>
+        /// <param name="bmp">減色したい画像</param>
+        /// <param name="token">キャンセルトークン</param>
+        /// <returns>減色された画像</returns>
         public async Task<Bitmap> GetImageAsync(Bitmap bmp, CancellationTokenSource token) { return await Task.Run(() => GetImage(bmp, token)); }
 
     }

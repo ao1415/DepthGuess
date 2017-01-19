@@ -25,7 +25,7 @@ namespace DepthGuess
         }
 
         /// <summary>メディアンフィルタを適用する</summary>
-        /// <param name="bmp">入力画像</param>
+        /// <param name="bmp">入力画像</param>C:\Users\i1211408\Documents\Visual Studio 2015\Projects\DepthGuess\DepthGuess\Class\Image\RingDetection.cs
         /// <returns>出力画像</returns>
         private Bitmap GetImage(Bitmap bmp)
         {

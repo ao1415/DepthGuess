@@ -1,29 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 /*
  * 画像を明るさに変換するクラスが定義されています。
  * GetBrightnessで明るさのラベルが得られます。
- * 未実装
  */
 
 namespace DepthGuess
 {
+    /// <summary>
+    /// 画像の明るさを得るためのクラス
+    /// </summary>
     class BrightnessConversion
     {
         LogWriter logWriter;
 
+        /// <summary>コンストラクタ</summary>
+        /// <param name="writer"><see cref="LogWriter"/></param>
         public BrightnessConversion(LogWriter writer)
         {
             logWriter = writer;
         }
 
+        /// <summary>画像の明るさを得る</summary>
+        /// <param name="bmp">画像</param>
+        /// <returns>光度ラベル</returns>
         public LabelStructure GetBrightness(Bitmap bmp)
         {
             LabelStructure label = new LabelStructure(bmp.Width, bmp.Height);

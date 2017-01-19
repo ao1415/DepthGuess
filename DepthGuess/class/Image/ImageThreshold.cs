@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 /*
  * 画像の二値化を行うクラスです。
  * GetImageで二値化された画像を得られます。
  */
-   
-   namespace DepthGuess
+
+namespace DepthGuess
 {
-    /// <summary>二値化処理を行う</summary>
+    /// <summary>
+    /// 二値化処理を行う
+    /// </summary>
     class ImageThreshold
     {
         LogWriter logWriter;

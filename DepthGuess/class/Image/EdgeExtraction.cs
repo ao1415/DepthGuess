@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 /*
  * エッジを抽出するクラスが定義されています。
@@ -14,7 +9,9 @@ using System.Threading.Tasks;
 
 namespace DepthGuess
 {
-    /// <summary>エッジを抽出する</summary>
+    /// <summary>
+    /// エッジを抽出する
+    /// </summary>
     class EdgeExtraction
     {
         LogWriter logWriter;

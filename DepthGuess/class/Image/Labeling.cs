@@ -288,7 +288,7 @@ namespace DepthGuess
 
         /// <summary>ラベル情報を視覚化する</summary>
         /// <param name="label">視覚化したいラベルデータ</param>
-        /// <returns>視覚化された画像<see cref="Bitmap"></returns>
+        /// <returns>視覚化された画像<see cref="Bitmap"/></returns>
         private Bitmap GetLabelImage(LabelStructure label)
         {
             logWriter.Write("ラベルデータの画像作成を行います");
@@ -335,7 +335,7 @@ namespace DepthGuess
         }
         /// <summary>ラベル情報を視覚化する(非同期)</summary>
         /// <param name="label">視覚化したいラベルデータ</param>
-        /// <returns>視覚化された画像<see cref="Bitmap"></returns>
+        /// <returns>視覚化された画像<see cref="Bitmap"/></returns>
         public async Task<Bitmap> GetLabelImageAsync(LabelStructure label)
         {
             return await Task.Run(() => GetLabelImage(label));
@@ -343,7 +343,7 @@ namespace DepthGuess
 
         /// <summary>画像からラベル情報を視覚化した画像を作成する</summary>
         /// <param name="bmp">視覚化したい画像</param>
-        /// <returns>視覚化された画像<see cref="Bitmap"></returns>
+        /// <returns>視覚化された画像<see cref="Bitmap"/></returns>
         private Bitmap GetLabelImage(Bitmap bmp)
         {
             var label = GetLabelTable(bmp);
