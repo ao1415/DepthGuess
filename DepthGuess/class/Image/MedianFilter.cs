@@ -25,7 +25,7 @@ namespace DepthGuess
         }
 
         /// <summary>メディアンフィルタを適用する</summary>
-        /// <param name="bmp">入力画像</param>C:\Users\i1211408\Documents\Visual Studio 2015\Projects\DepthGuess\DepthGuess\Class\Image\RingDetection.cs
+        /// <param name="bmp">入力画像</param>
         /// <returns>出力画像</returns>
         private Bitmap GetImage(Bitmap bmp)
         {
@@ -37,17 +37,10 @@ namespace DepthGuess
 
             return bitmap;
         }
+        /// <summary>メディアンフィルタを適用する(非同期)</summary>
+        /// <param name="bmp">入力画像</param>
+        /// <returns>出力画像</returns>
         public async Task<Bitmap> GetImageAsync(Bitmap bmp) { return await Task.Run(() => GetImage(bmp)); }
-
-
-        //未実装
-        public LabelStructure GetLabel(LabelStructure label)
-        {
-            LabelStructure l = new LabelStructure(label.Width, label.Height);
-
-            return l;
-        }
-
-
+        
     }
 }

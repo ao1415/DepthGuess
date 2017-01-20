@@ -18,7 +18,10 @@ namespace DepthGuess
     class MedianCut
     {
 
-        private uint ColorNumber = 2;
+        /// <summary>
+        /// 減色数
+        /// </summary>
+        private uint ColorNumber;
         private LogWriter logWriter;
 
         /// <summary>コンストラクタ</summary>
@@ -198,6 +201,9 @@ namespace DepthGuess
             int db = c1.B - c2.B;
             return (int)Math.Sqrt(dr * dr + dg * dg + db * db);
         }
+        /// <summary>色の平均をとる</summary>
+        /// <param name="colors">色の配列</param>
+        /// <returns>平均値</returns>
         private Color GetColorAverage(List<Color> colors)
         {
             if (colors.Count == 0)
@@ -219,6 +225,10 @@ namespace DepthGuess
             return Color.FromArgb((byte)r, (byte)g, (byte)b);
         }
 
+        /// <summary>要素の交換を行う</summary>
+        /// <typeparam name="T">型</typeparam>
+        /// <param name="LeftParam">入れ替えたい要素</param>
+        /// <param name="RightParam">入れ替えたい要素</param>
         private void Swap<T>(ref T LeftParam, ref T RightParam)
         {
             T temp;

@@ -254,16 +254,6 @@ namespace DepthGuess
 
             return list.ToArray();
         }
-
-        private bool IsRing(LabelStructure label, int n)
-        {
-            logWriter.Write("内包するものがあるか調べます");
-
-            int[] r = GetInclusionNumber(label, n);
-
-            logWriter.Write("内包するものがあるか調べました");
-            return r.Length > 0;
-        }
-
+        
     }
 }
