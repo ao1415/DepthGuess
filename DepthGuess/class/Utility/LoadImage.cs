@@ -8,7 +8,9 @@ using System.Drawing;
 
 namespace DepthGuess
 {
-    /// <summary>ファイルから画像を読み込む</summary>
+    /// <summary>
+    /// ファイルから画像を読み込む
+    /// </summary>
     class LoadImage
     {
         private LogWriter logWriter;

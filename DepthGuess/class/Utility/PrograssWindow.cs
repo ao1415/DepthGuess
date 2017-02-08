@@ -77,6 +77,9 @@ namespace DepthGuess
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// このクラスを破棄する
+        /// </summary>
         protected void Dispose(bool isDisposing)
         {
             if (!disposed)

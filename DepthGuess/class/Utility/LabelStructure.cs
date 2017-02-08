@@ -69,7 +69,11 @@ namespace DepthGuess
             get { return label[y, x]; }
         }
 
+        /// <summary>ラベルの最大値</summary>
+        /// <value>最大値</value>
         public int Max { get { return max; } }
+        /// <summary>ラベルの最小値</summary>
+        /// <value>最小値</value>
         public int Min { get { return min; } }
 
         /// <summary>

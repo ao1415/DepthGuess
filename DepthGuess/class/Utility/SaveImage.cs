@@ -15,7 +15,9 @@ using System.Threading.Tasks;
 
 namespace DepthGuess
 {
-    /// <summary>画像をファイルに保存する</summary>
+    /// <summary>
+    /// 画像をファイルに保存する
+    /// </summary>
     class SaveImage
     {
         LogWriter logWriter;
@@ -133,6 +135,10 @@ namespace DepthGuess
             logWriter.Write("path=" + path);
         }
 
+        /// <summary>深さごとに画像を保存する</summary>
+        /// <param name="image">保存したい画像</param>
+        /// <param name="depth">画像の深さデータ</param>
+        /// <param name="path">保存したい場所</param>
         public void SaveChip(Bitmap image, LabelStructure depth, string path)
         {
             logWriter.Write("画像を保存します");
